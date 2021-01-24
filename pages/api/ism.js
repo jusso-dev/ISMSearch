@@ -14,5 +14,6 @@ export default async function handler(req, res) {
     } catch(err) {
         //TODO: log better error/log to an actual logging backend
         console.error(err)
+        res.status(500).json(err)
     }
   }

@@ -62,18 +62,20 @@ export default function Home() {
           </div>
         }
 
+        {/* TODO tidy this up */}
         {results?.hits?.length > 1 &&
           <div className={styles.grid}>
             <div className={styles.card}>
-              <p><strong>{results.nbHits} results. Showing you <strong>{results.limit}. Search took </strong>({results.processingTimeMs} ms)</strong></p>
+              <p><strong>{results.nbHits} results. Showing you <strong>{results.nbHits.toString().length < results.limit.toString().length ? results.nbHits : results.limit}. Search took </strong>({results.processingTimeMs} ms)</strong></p>
             </div>
           </div>
         }
 
+        {/* TODO tidy this up */}
         <div className={styles.grid}>
           {results?.hits?.map((hit, index) => (
             <div key={index} className={styles.card}>
-              {hit.Identifier.toString().length < 4 ? <h3>0{hit.Identifier}</h3> : <h3>{hit.Identifier}</h3>}
+              {<h3>{hit.Identifier}</h3>}
               <h3>{hit.Section}</h3>
               <p>{hit.Guideline}</p>
               <p>{hit.Topic}</p>
