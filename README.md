@@ -3,4 +3,4 @@ Provides the ability to search the ISM in the form of indexed documents, making 
 
 <br />
 
-<img src='screenshot.jpg' height='250px' />
+<img src='screenshot.jpg' height='450px' />
