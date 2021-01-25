@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styles from '../styles/Home.module.css'
 import { useForm } from "react-hook-form";
+import ResultsCard from '../components/ResultsCard'
+import SearchInfo from '../components/SearchInfo'
 
 export default function Home() {
 
@@ -45,14 +47,15 @@ export default function Home() {
         </div>
 
         <form onSubmit={handleSubmit(searchQuery)}>
+          
+          {errors.searchTerm && <p className={styles.span}>This field is required</p>}
 
           <input placeholder={"Enter search term..."} style={{ borderRadius: '25px', width: '100%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} name="searchTerm" ref={register({ required: true })} />
           <br />
           <input defaultValue={10} style={{ borderRadius: '25px', width: '20%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} type="number" name="numberOfResults" ref={register({ required: true })} min="1" max="800"></input>
           <br />
-          {errors.searchTerm && <span className={styles.span}>This field is required</span>}
 
-          <button style={{ borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
+          <button style={{ borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
         </form>
 
         {results?.hits?.length < 1 &&
@@ -62,31 +65,13 @@ export default function Home() {
           </div>
         }
 
-        {/* TODO tidy this up */}
         {results?.hits?.length > 1 &&
-          <div className={styles.grid}>
-            <div className={styles.card}>
-              <p><strong>{results.nbHits} results. Showing you <strong>{results.nbHits.toString().length < results.limit.toString().length ? results.nbHits : results.limit}. Search took </strong>({results.processingTimeMs} ms)</strong></p>
-            </div>
-          </div>
+          <SearchInfo results={results} />
         }
 
-        {/* TODO tidy this up */}
-        <div className={styles.grid}>
-          {results?.hits?.map((hit, index) => (
-            <div key={index} className={styles.card}>
-              {<h3>{hit.Identifier}</h3>}
-              <h3>{hit.Section}</h3>
-              <p>{hit.Guideline}</p>
-              <p>{hit.Topic}</p>
-              <br />
-              <p>{hit.Description}</p>
-              <br />
-              <p>Revision: {hit.Revision}</p>
-              <p>Update {hit.Updated}</p>
-            </div>
-          ))}
-        </div>
+        {results?.hits?.length > 1 &&
+          <ResultsCard results={results} />
+        }
 
       </main>
 

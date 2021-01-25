@@ -108,8 +108,14 @@
   color:#eeeeee
 }
 
-.logo {
-  height: 1em;
+.inputSearch {
+  border-radius: '25px';
+  width: '100%';
+  padding: '12px 20px';
+  margin: '8px 0px';
+  border: '2px solid black';
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 600px) {
