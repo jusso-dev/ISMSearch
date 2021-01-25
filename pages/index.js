@@ -46,13 +46,13 @@ export default function Home() {
 
         <form onSubmit={handleSubmit(searchQuery)}>
 
-          <input placeholder={"Enter search term..."} style={{ width: '100%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} name="searchTerm" ref={register({ required: true })} />
+          <input placeholder={"Enter search term..."} style={{ borderRadius: '25px', width: '100%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} name="searchTerm" ref={register({ required: true })} />
           <br />
-          <input defaultValue={10} style={{ width: '20%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} type="number" name="numberOfResults" ref={register({ required: true })} min="1" max="800"></input>
+          <input defaultValue={10} style={{ borderRadius: '25px', width: '20%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} type="number" name="numberOfResults" ref={register({ required: true })} min="1" max="800"></input>
           <br />
           {errors.searchTerm && <span className={styles.span}>This field is required</span>}
 
-          <button style={{ backgroundColor: 'black', border: 'none', color: 'white', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
+          <button style={{ borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
         </form>
 
         {results?.hits?.length < 1 &&
