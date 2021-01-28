@@ -9,6 +9,7 @@
     "postbuild": "next-on-netlify"
   },
   "dependencies": {
+    "meilisearch": "^0.18.0",
     "next": "10.0.5",
     "next-on-netlify": "^2.8.4",
     "react": "17.0.1",

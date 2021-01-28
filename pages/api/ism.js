@@ -1,19 +1,25 @@
+import { MeiliSearch } from 'meilisearch'
+
 export default async function handler(req, res) {
 
-    let queryLimit = req.query.queryLimit
-    let searchQuery = req.query.searchQuery
-
-    let result = await fetch(`${process.env.SEARCH_BASE_URL}q=${searchQuery}&limit=${queryLimit}`, {
-      headers: {
-        "X-Meili-API-Key": process.env.API_KEY
-      }
+    const client = new MeiliSearch({
+      host: process.env.SEARCH_BASE_URL,
+      apiKey: process.env.API_KEY,
     })
-    try {
-        let json = await result.json()
-        res.status(200).json(json)
-    } catch(err) {
-        //TODO: log better error/log to an actual logging backend
-        console.error(err)
-        res.status(500).json(err)
+
+    const index = client.index('ism')
+
+    let queryLimit = Number(req.query.queryLimit)
+    let searchQuery = req.query.searchQuery
+    let searchFilters = req.query.searchFilters
+
+    try{
+      const search = await index.search(searchQuery, { limit: queryLimit, filters: searchFilters })
+      return res.status(200).json(search)
+    }
+    catch(err) {
+      //TODO: add real logging.
+      console.log(err)
+      return res.status(500).json({"message": "Failed to get result."})
     }
   }
