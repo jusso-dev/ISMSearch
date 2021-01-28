@@ -15,7 +15,7 @@ export default function Home() {
     if (res.ok) {
       let json = await res.json()
       setResults(json)
-      return
+      return 
     } else {
       setError("An error occurred. Please try again later.")
       return
@@ -50,12 +50,17 @@ export default function Home() {
           
           {errors.searchTerm && <p className={styles.span}>This field is required</p>}
 
-          <input placeholder={"Enter search term..."} style={{ borderRadius: '25px', width: '100%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} name="searchTerm" ref={register({ required: true })} />
-          <br />
-          <input defaultValue={10} style={{ borderRadius: '25px', width: '20%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} type="number" name="numberOfResults" ref={register({ required: true })} min="1" max="800"></input>
-          <br />
-
-          <button style={{ borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
+          <label>
+              Enter search term here.. ie. 0041 or CISO
+              <input placeholder={"Enter search term..."} style={{ borderRadius: '25px', width: '100%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} name="searchTerm" ref={register({ required: true })} />
+          </label>
+          <label>
+              Limit results
+              <br />
+              <input defaultValue={10} style={{ borderRadius: '25px', width: '20%', padding: '12px 20px', margin: '8px 0px', border: '2px solid black' }} type="number" name="numberOfResults" ref={register({ required: true })} min="1" max="800"></input>
+          </label>
+        
+          <button style={{ fontWeight:'bold', borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
         </form>
 
         {results?.hits?.length < 1 &&
