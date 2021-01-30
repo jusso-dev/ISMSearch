@@ -16,6 +16,9 @@ export default function Home() {
     if(data.PROTECTED) {
       url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?searchFilters=(PROTECTED = Yes AND OFFICIAL = No)&queryLimit=${data.numberOfResults}`
     }
+    else if(data.NOTOPORSECRET) {
+      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?searchFilters=(TOPSECRET= No AND SECRET = No)&queryLimit=${data.numberOfResults}&searchQuery=${data.searchTerm}`
+    }
     else {
       url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?queryLimit=${data.numberOfResults}&searchQuery=${data.searchTerm}`
     }
@@ -70,6 +73,11 @@ export default function Home() {
           <label>
               Show me only PROTECTED controls
               <input type={'checkbox'} style={{height:'15px', width:'15px'}} name="PROTECTED" ref={register({ required: false })} />
+          </label>
+          <br />
+          <label>
+              Exclude SECRET and TOP SECRET controls from result
+              <input type={'checkbox'} style={{height:'15px', width:'15px'}} name="NOTOPORSECRET" ref={register({ required: false })} />
           </label>
           
           <br />
