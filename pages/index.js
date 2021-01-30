@@ -14,7 +14,7 @@ export default function Home() {
 
     let url = ''
     if(data.PROTECTED) {
-      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?searchFilters=(PROTECTED = Yes AND OFFICAL = No)`
+      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?searchFilters=(PROTECTED = Yes AND OFFICIAL = No)&queryLimit=${data.numberOfResults}`
     }
     else {
       url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?queryLimit=${data.numberOfResults}&searchQuery=${data.searchTerm}`
