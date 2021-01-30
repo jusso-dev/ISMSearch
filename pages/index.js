@@ -84,11 +84,11 @@ export default function Home() {
           </div>
         }
 
-        {results?.hits?.length > 1 &&
+        {results?.hits?.length > 0 &&
           <SearchInfo results={results} />
         }
 
-        {results?.hits?.length > 1 &&
+        {results?.hits?.length > 0 &&
           <ResultsCard results={results} />
         }
 
