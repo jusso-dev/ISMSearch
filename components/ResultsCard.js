@@ -14,6 +14,11 @@ export default function ResultsCard(props) {
                     <br />
                     <p>Revision: {hit.Revision}</p>
                     <p>Update {hit.Updated}</p>
+                    <br />
+                    <p>OFFICIAL: {hit.OFFICIAL}</p>
+                    <p>PROTECTED: {hit.PROTECTED}</p>
+                    <p>SECRET: {hit.SECRET}</p>
+                    <p>TOP SECRET: {hit.TOPSECRET}</p>
                 </div>
             ))}
         </div>
