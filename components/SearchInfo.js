@@ -6,7 +6,9 @@ export default function ResultsCard(props) {
             <div className={styles.card}>
                 <p><strong>{props.results.hits.length} results. 
                 Showing you <strong>{props.results.hits.length < props.results.limit
-                 ? props.results.hits.length : props.results.limit}. Search took </strong>({props.results.processingTimeMs} ms)</strong></p>
+                 ? props.results.hits.length : props.results.limit}.
+                 <br /> 
+                 Search took </strong>({props.results.processingTimeMs} ms)</strong></p>
             </div>
         </div>
     )
