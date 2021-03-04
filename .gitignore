@@ -35,3 +35,7 @@ yarn-error.log*
 
 # Local Netlify folder
 .netlify
+
+# Ignore local function builds for Netlify
+/out_functions
+/out_publish
