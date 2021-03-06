@@ -23,15 +23,7 @@ export default function Home() {
       url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ism?queryLimit=${data.numberOfResults}&searchQuery=${data.searchTerm}`
     }
 
-    let res = await fetch(url,
-        {
-          headers: {
-              "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_CORS_DOMAIN ?? 'http://localhost:3000'}`,
-              "Access-Control-Allow-Headers": "Content-Type",
-              "Access-Control-Allow-Methods": "GET",
-          },
-        }
-      )
+    let res = await fetch(url)
     if (res.ok) {
       let json = await res.json()
       setResults(json)
