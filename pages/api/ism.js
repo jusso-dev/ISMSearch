@@ -1,6 +1,17 @@
 import { MeiliSearch } from 'meilisearch'
+import Cors from 'cors'
+import initMiddleware from '../../lib/init-middleware'
+
+const cors = initMiddleware(
+  Cors({
+    methods: ['GET'],
+    origin: `${process.env.CORS_DOMAIN ?? 'http://localhost:3000'}`
+  })
+)
 
 export default async function handler(req, res) {
+
+    await cors(req, res)
 
     const client = new MeiliSearch({
       host: process.env.SEARCH_BASE_URL,
