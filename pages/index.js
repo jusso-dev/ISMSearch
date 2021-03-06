@@ -50,7 +50,7 @@ export default function Home() {
         </div>
 
         <div className={styles.card}>
-          <p>Last updated: 22/01/2021</p>
+          <p>Last updated: 06/03/2021</p>
           <br />
           <h3>Coming soon...</h3>
           <li>Export to csv function</li>
