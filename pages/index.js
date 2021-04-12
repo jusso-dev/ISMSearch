@@ -103,7 +103,7 @@ function Home({message}) {
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
 
   let url = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}`
   let res = await fetch(`${url}/api/message`)
