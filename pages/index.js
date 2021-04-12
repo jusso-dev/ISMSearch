@@ -3,8 +3,9 @@ import styles from '../styles/Home.module.css'
 import { useForm } from "react-hook-form";
 import ResultsCard from '../components/ResultsCard'
 import SearchInfo from '../components/SearchInfo'
+import MessageCard from '../components/MessageCard'
 
-export default function Home() {
+function Home({message}) {
 
   const { register, handleSubmit, errors } = useForm();
   const [results, setResults] = useState([]);
@@ -49,14 +50,7 @@ export default function Home() {
           <strong><a href='/disclaimer'>Disclaimer</a></strong>
         </div>
 
-        <div className={styles.card}>
-          <p>Last updated: 11/04/2021</p>
-          <br />
-          <h3>Coming soon...</h3>
-          <li>Export to csv function</li>
-          <li>Notification of new ISM version</li>
-          <li>Searchable previous versions of the ISM</li>
-        </div>
+        <MessageCard message={message} />
 
         <form onSubmit={handleSubmit(searchQuery)}>
           
@@ -108,3 +102,18 @@ export default function Home() {
     </div>
   )
 }
+
+export async function getStaticProps() {
+
+  let url = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}`
+  let res = await fetch(`${url}/api/messages`)
+  let message = await res.json()
+
+  return {
+    props: {
+      message: message.content
+    },
+  }
+}
+
+export default Home
