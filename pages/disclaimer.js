@@ -19,6 +19,8 @@ export default function Disclaimer() {
                         <li>A source of truth</li>
                         <li>A replacement for the ISM</li>
                         <li>Affiliated or connected to the Australian Cyber Security Centre in any way, shape or form. I take no responsibility for the information you find on this site and the <strong><a href='https://cyber.gov.au/ism' target='_blank'>ISM</a></strong> should always be consulted.</li>
+                        <br />
+                        <p>For analytical reasons, all searches performed on the site are logged. No personal information or information about your browser or IP are captured.</p>
                     </div>
                     
                     <div className={styles.card}>
