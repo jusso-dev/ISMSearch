@@ -75,10 +75,8 @@ export default async function handler(req, res) {
   let searchFilters = req.query.searchFilters
 
   try {
-    // log search result+
-    if (process.env.FEATURE_TOGGLE_LOG_SEARCHES === 'true') {
-      await recordSearchResult(searchQuery)
-    }
+    // log search result
+    await recordSearchResult(searchQuery)
     const search = await index.search(searchQuery, { limit: queryLimit, filters: searchFilters })
     return res.status(200).json(search)
   }
