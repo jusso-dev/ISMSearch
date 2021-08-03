@@ -9,6 +9,8 @@ const cors = initMiddleware(
   })
 )
 
+
+
 /*
   Helper function to record search queries for analytics.
 */
@@ -74,7 +76,9 @@ export default async function handler(req, res) {
 
   try {
     // log search result
-    await recordSearchResult(searchQuery)
+    if (process.env.FEATURE_TOGGLE_LOG_SEARCHES === 'true') {
+      await recordSearchResult(searchQuery)
+    }
     const search = await index.search(searchQuery, { limit: queryLimit, filters: searchFilters })
     return res.status(200).json(search)
   }
