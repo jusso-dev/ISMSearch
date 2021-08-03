@@ -76,8 +76,6 @@ export default async function handler(req, res) {
 
   try {
     // log search result+
-    console.log("Feature toggle value was: " + process.env.FEATURE_TOGGLE_LOG_SEARCHES)
-    console.log(typeof(process.env.FEATURE_TOGGLE_LOG_SEARCHES))
     if (process.env.FEATURE_TOGGLE_LOG_SEARCHES === 'true') {
       await recordSearchResult(searchQuery)
     }
