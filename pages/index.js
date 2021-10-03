@@ -111,7 +111,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      message: message.content
+      message: message.message
     },
   }
 }
