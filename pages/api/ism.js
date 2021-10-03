@@ -1,6 +1,7 @@
 import { MeiliSearch } from 'meilisearch'
 import Cors from 'cors'
 import initMiddleware from '../../lib/init-middleware'
+import * as admin from "firebase-admin";
 
 const cors = initMiddleware(
   Cors({
@@ -9,50 +10,25 @@ const cors = initMiddleware(
   })
 )
 
-
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+        projectId: process.env.PROJECT_ID,
+        privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        clientEmail: process.env.CLIENT_EMAIL,
+    })
+  });
+}
 
 /*
   Helper function to record search queries for analytics.
 */
 const recordSearchResult = async (text) => {
   try {
-    let baseUrl = process.env.RECORD_SEARCH_BASE_URL
-
-    let jwt = await fetch(baseUrl + "/auth/local", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(
-          {
-            identifier: process.env.STRAPI_USERNAME,
-            password: process.env.STRAPI_PASSWORD
-          }
-        )
-    })
-
-    if (!jwt.ok) {
-      // TODO: add real logging
-      console.log("Failed to get JWT.")
-      // no point continuing
-      return;
-    }
-
-    let content = await jwt.json()
-
-    let searchResult = await fetch(baseUrl + "/search-results", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${content.jwt}`
-      },
-      body: JSON.stringify({ searchedText: text }),
-    })
-
-    if (!searchResult.ok) {
-      // TODO: add real logging
-      console.log("Failed to save searched text.")
-    }
+    await admin
+            .firestore()
+            .collection('recorded-searches')
+            .add({searchedText:text, searchTime:new Date()})
   } catch (err) {
     // TODO: add real logging
     console.log(err)
