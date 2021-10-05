@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     apiKey: process.env.API_KEY,
   })
 
-  const index = client.index('ism')
+  const index = client.index('ism-sep-2021')
 
   let queryLimit = Number(req.query.queryLimit)
   let searchQuery = req.query.searchQuery
