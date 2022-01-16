@@ -46,8 +46,12 @@ function Home({message}) {
           Get started by entering a search term below...
         </p>
 
-        <div className={styles.card}>
+        <div className={styles.card} style={{textAlign:'center'}}>
           <strong><a href='/disclaimer'>Disclaimer</a></strong>
+        </div>
+
+        <div style={{textAlign:'center'}}>
+        <a href="https://www.buymeacoffee.com/justinmiddler"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=justinmiddler&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"></img></a>
         </div>
 
         <MessageCard message={message} />
@@ -97,7 +101,7 @@ function Home({message}) {
       </main>
 
       <footer className={styles.footer}>
-        &copy; - Justin Middler 2021
+        Justin Middler {new Date().getFullYear()} - &copy; All rights reserved
       </footer>
     </div>
   )
