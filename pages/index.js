@@ -77,7 +77,16 @@ function Home({message}) {
               Exclude SECRET and TOP SECRET controls from result
               <input type={'checkbox'} style={{height:'15px', width:'15px'}} name="NOTOPORSECRET" ref={register({ required: false })} />
           </label>
-          
+          <br />
+          <label>
+              Show Maturity Level 2 controls
+              <input type={'checkbox'} style={{height:'15px', width:'15px'}} name="ML2" ref={register({ required: false })} />
+          </label>
+          <br />
+          <label>
+              Show Maturity Level 3 controls
+              <input type={'checkbox'} style={{height:'15px', width:'15px'}} name="ML3" ref={register({ required: false })} />
+          </label>
           <br />
           <br />
           <button style={{ fontWeight:'bold', borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
