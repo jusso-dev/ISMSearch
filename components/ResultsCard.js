@@ -19,6 +19,9 @@ export default function ResultsCard(props) {
                     <p>PROTECTED: {hit.PROTECTED}</p>
                     <p>SECRET: {hit.SECRET}</p>
                     <p>TOP SECRET: {hit.TOPSECRET}</p>
+                    <p>Maturity Level 2: {hit.ML2}</p>
+                    <p>Maturity Level 3: {hit.ML3}</p>
+                    <p></p>
                 </div>
             ))}
         </div>
