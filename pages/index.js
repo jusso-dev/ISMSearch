@@ -4,14 +4,18 @@ import { useForm } from "react-hook-form";
 import ResultsCard from '../components/ResultsCard'
 import SearchInfo from '../components/SearchInfo'
 import MessageCard from '../components/MessageCard'
+import ErrorCard from '../components/ErrorCard'
 
 function Home({message}) {
 
   const { register, handleSubmit, errors } = useForm();
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const searchQuery = async (data) => {
+
+    setLoading(true);
 
     let url = '' 
     if(data.PROTECTED) {
@@ -28,9 +32,11 @@ function Home({message}) {
     if (res.ok) {
       let json = await res.json()
       setResults(json)
+      setLoading(false)
       return 
     } else {
-      setError("An error occurred. Please try again later.")
+      setError("An error occurred. This error has been logged. Please try again later.")
+      setLoading(false)
       return
     }
   }
@@ -55,6 +61,7 @@ function Home({message}) {
         </div>
 
         <MessageCard message={message} />
+        {error !== "" && <ErrorCard message={error} />}
 
         <form onSubmit={handleSubmit(searchQuery)}>
           
@@ -79,15 +86,8 @@ function Home({message}) {
           </label>
           <br />
           <br />
-          <button style={{ fontWeight:'bold', borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">Submit</button>
+          <button style={{ fontWeight:'bold', borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">{loading ? 'Loading please wait...' : 'Submit'}</button>
         </form>
-
-        {results?.hits?.length < 1 &&
-          <div className={styles.card}>
-            <p>No results...</p>
-            {error && <p>{error}</p>}
-          </div>
-        }
 
         {results?.hits?.length > 0 &&
           <SearchInfo results={results} />
@@ -100,7 +100,7 @@ function Home({message}) {
       </main>
 
       <footer className={styles.footer}>
-        Justin Middler {new Date().getFullYear()} - &copy; All rights reserved
+      ISM Search &copy; - Justin Middler - {new Date().getFullYear()} - All rights reserved
       </footer>
     </div>
   )
