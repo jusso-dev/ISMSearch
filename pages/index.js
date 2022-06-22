@@ -89,6 +89,12 @@ function Home({message}) {
           <button style={{ fontWeight:'bold', borderRadius: '25px', backgroundColor: '#4ecca3', border: 'none', color: '#eeeeee', padding: '16px 32px', width: '100%' }} type="submit">{loading ? 'Loading please wait...' : 'Submit'}</button>
         </form>
 
+        {results?.hits?.length < 1 &&
+          <div className={styles.card}>
+            <p>No results...</p>
+          </div>
+        }
+
         {results?.hits?.length > 0 &&
           <SearchInfo results={results} />
         }
