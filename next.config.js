@@ -1,4 +1,4 @@
-// This is need because webpack 5 does not work remotely, only locally
+// This is needed because webpack 5 does not work remotely, only locally
 
 let local = process.env.LOCAL ? true : false
 
