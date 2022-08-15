@@ -57,7 +57,7 @@ function Home({message}) {
         </div>
 
         <div style={{textAlign:'center'}}>
-        <a href="https://www.buymeacoffee.com/justinmiddler"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=justinmiddler&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"></img></a>
+          <a href="https://www.buymeacoffee.com/justinmiddler"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=justinmiddler&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"></img></a>
         </div>
 
         <MessageCard message={message} />
@@ -106,7 +106,8 @@ function Home({message}) {
       </main>
 
       <footer className={styles.footer}>
-      ISM Search &copy; - Justin Middler - {new Date().getFullYear()} - All rights reserved
+          ISM Search &copy; - Justin Middler - {new Date().getFullYear()} - All rights reserved
+          <a target='_blank' href='https://ismsearch.statuspage.io/'>View status of ISM Search</a>
       </footer>
     </div>
   )
@@ -114,9 +115,15 @@ function Home({message}) {
 
 export async function getServerSideProps() {
 
-  let url = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}`
-  let res = await fetch(`${url}/api/message`)
-  let message = await res.json()
+  let message = { message: '' }
+
+  try {
+    let url = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}`
+    let res = await fetch(`${url}/api/message`)
+    message = await res.json()
+  } catch (error) {
+    message.message = "Failed to fetch announcement message."
+  }
 
   return {
     props: {

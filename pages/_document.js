@@ -28,6 +28,7 @@ export default class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+          <script src="https://v76k9zz9zzdl.statuspage.io/embed/script.js"></script>
         </body>
       </Html>
     )
