@@ -8,39 +8,43 @@ workflow.
 
 ## Screenshots
 
-### Desktop Workbench
+The full screenshot set is collapsed so the project overview stays easy to scan.
 
-![Workbench search results](docs/screenshots/01-workbench-search-results.png)
+<details>
+<summary><strong>Desktop workbench gallery</strong></summary>
 
-![Classification filters](docs/screenshots/02-classification-filters.png)
+| Search and filters | Natural-language evidence |
+| --- | --- |
+| <img src="docs/screenshots/01-workbench-search-results.png" alt="Workbench search results" width="420"> | <img src="docs/screenshots/03-ollama-answer.png" alt="Ollama answer with evidence controls" width="420"> |
+| <img src="docs/screenshots/02-classification-filters.png" alt="Classification filters" width="420"> | <img src="docs/screenshots/06-version-diff-viewer.png" alt="ISM version diff viewer" width="420"> |
 
-![Ollama answer with evidence controls](docs/screenshots/03-ollama-answer.png)
+| Governance generation | Policy drafting |
+| --- | --- |
+| <img src="docs/screenshots/04-ssp-csv-generator.png" alt="System Security Plan CSV generator" width="420"> | <img src="docs/screenshots/05-policy-generator.png" alt="Policy generator with markdown preview" width="420"> |
 
-![System Security Plan CSV generator](docs/screenshots/04-ssp-csv-generator.png)
+</details>
 
-![Policy generator with markdown preview](docs/screenshots/05-policy-generator.png)
+<details>
+<summary><strong>Intelligence and operations gallery</strong></summary>
 
-![ISM version diff viewer](docs/screenshots/06-version-diff-viewer.png)
+| ACSC advisories | Jobs | Health |
+| --- | --- | --- |
+| <img src="docs/screenshots/07-acsc-advisories.png" alt="ACSC advisories" width="300"> | <img src="docs/screenshots/08-bullmq-jobs.png" alt="BullMQ jobs dashboard" width="300"> | <img src="docs/screenshots/09-health-dashboard.png" alt="Health dashboard" width="300"> |
 
-### Intelligence And Operations
+</details>
 
-![ACSC advisories](docs/screenshots/07-acsc-advisories.png)
+<details>
+<summary><strong>Mobile gallery</strong></summary>
 
-![BullMQ jobs dashboard](docs/screenshots/08-bullmq-jobs.png)
+| Workbench | Results | Advisories |
+| --- | --- | --- |
+| <img src="docs/screenshots/10-mobile-workbench-actions.png" alt="Mobile workbench actions" width="220"> | <img src="docs/screenshots/11-mobile-search-results.png" alt="Mobile search results" width="220"> | <img src="docs/screenshots/12-mobile-advisories.png" alt="Mobile ACSC advisories" width="220"> |
 
-![Health dashboard](docs/screenshots/09-health-dashboard.png)
+| Jobs | Health |
+| --- | --- |
+| <img src="docs/screenshots/13-mobile-jobs.png" alt="Mobile BullMQ jobs" width="220"> | <img src="docs/screenshots/14-mobile-health.png" alt="Mobile health checks" width="220"> |
 
-### Mobile
-
-![Mobile workbench actions](docs/screenshots/10-mobile-workbench-actions.png)
-
-![Mobile search results](docs/screenshots/11-mobile-search-results.png)
-
-![Mobile ACSC advisories](docs/screenshots/12-mobile-advisories.png)
-
-![Mobile BullMQ jobs](docs/screenshots/13-mobile-jobs.png)
-
-![Mobile health checks](docs/screenshots/14-mobile-health.png)
+</details>
 
 ## What It Does
 
