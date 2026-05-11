@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env*
+data/meili
+data/ollama
+npm-debug.log*
+README.md
+screenshot.jpg

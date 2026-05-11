@@ -1,0 +1,101 @@
+services:
+  seed:
+    build:
+      context: .
+      target: seeder
+    environment:
+      ISM_RELEASE_COUNT: all
+      REDIS_URL: redis://redis:6379
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+    depends_on:
+      meilisearch:
+        condition: service_started
+      redis:
+        condition: service_started
+    volumes:
+      - ./data:/app/data
+    restart: "no"
+
+  worker:
+    build:
+      context: .
+      target: worker
+    environment:
+      ISM_RELEASE_COUNT: all
+      REDIS_URL: redis://redis:6379
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      ISM_SYNC_CRON: "0 */6 * * *"
+      ACSC_SYNC_CRON: "*/30 * * * *"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+      meilisearch:
+        condition: service_started
+    volumes:
+      - ./data:/app/data
+
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
+      ISM_DATA_DIR: /app/data/ism
+      ACSC_DATA_DIR: /app/data/acsc
+      REDIS_URL: redis://redis:6379
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      JOBS_ADMIN_TOKEN: ${JOBS_ADMIN_TOKEN:-}
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: llama3.2:3b
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+      meilisearch:
+        condition: service_started
+      redis:
+        condition: service_started
+      ollama:
+        condition: service_started
+    volumes:
+      - ./data:/app/data:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.26
+    ports:
+      - "127.0.0.1:7700:7700"
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meili_data:/meili_data
+
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - redis_data:/data
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  meili_data:
+  redis_data:
+  ollama_data:

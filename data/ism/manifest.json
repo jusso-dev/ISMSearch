@@ -1,0 +1,199 @@
+{
+  "generatedAt": "2026-05-11T05:33:52.681Z",
+  "source": "AustralianCyberSecurityCentre/ism-oscal",
+  "rssFeed": "https://www.cyber.gov.au/rss/news",
+  "releases": [
+    {
+      "version": "v2026.03.24",
+      "release": "2026.03.24",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2026.03.24/ISM_catalog.json",
+      "count": 1130,
+      "syncedAt": "2026-05-11T05:33:44.662Z"
+    },
+    {
+      "version": "v2025.12.9",
+      "release": "2025.12.9",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.12.9/ISM_catalog.json",
+      "count": 1107,
+      "syncedAt": "2026-05-11T05:33:45.003Z"
+    },
+    {
+      "version": "v2025.10.8",
+      "release": "2025.10.8",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.10.8/ISM_catalog.json",
+      "count": 1092,
+      "syncedAt": "2026-05-11T05:33:45.332Z"
+    },
+    {
+      "version": "v2025.09.15",
+      "release": "2025.09.15",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.09.15/ISM_catalog.json",
+      "count": 1092,
+      "syncedAt": "2026-05-11T05:33:45.651Z"
+    },
+    {
+      "version": "v2025.09.10",
+      "release": "2025.09.10",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.09.10/ISM_catalog.json",
+      "count": 1092,
+      "syncedAt": "2026-05-11T05:33:45.968Z"
+    },
+    {
+      "version": "v2025.07.16",
+      "release": "2025.07.16",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.07.16/ISM_catalog.json",
+      "count": 1086,
+      "syncedAt": "2026-05-11T05:33:46.288Z"
+    },
+    {
+      "version": "v2025.03.31",
+      "release": "2025.03.31",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2025.03.31/ISM_catalog.json",
+      "count": 1028,
+      "syncedAt": "2026-05-11T05:33:46.599Z"
+    },
+    {
+      "version": "v2024.12.19",
+      "release": "2024.12.19",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.12.19/ISM_catalog.json",
+      "count": 1005,
+      "syncedAt": "2026-05-11T05:33:46.912Z"
+    },
+    {
+      "version": "v2024.10.4",
+      "release": "2024.10.4",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.10.4/ISM_catalog.json",
+      "count": 978,
+      "syncedAt": "2026-05-11T05:33:47.231Z"
+    },
+    {
+      "version": "v2024.09.26",
+      "release": "2024.09.26",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.09.26/ISM_catalog.json",
+      "count": 978,
+      "syncedAt": "2026-05-11T05:33:47.545Z"
+    },
+    {
+      "version": "v2024.06.18",
+      "release": "2024.06.18",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.06.18/ISM_catalog.json",
+      "count": 938,
+      "syncedAt": "2026-05-11T05:33:48.649Z"
+    },
+    {
+      "version": "v2024.03.12",
+      "release": "2024.03.12",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.03.12/ISM_catalog.json",
+      "count": 930,
+      "syncedAt": "2026-05-11T05:33:48.973Z"
+    },
+    {
+      "version": "v2024.03.5",
+      "release": "2024.03.5",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2024.03.5/ISM_catalog.json",
+      "count": 930,
+      "syncedAt": "2026-05-11T05:33:49.299Z"
+    },
+    {
+      "version": "v2023.12.1",
+      "release": "2023.12.1",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.12.1/ISM_catalog.json",
+      "count": 928,
+      "syncedAt": "2026-05-11T05:33:49.610Z"
+    },
+    {
+      "version": "v2023.09.25",
+      "release": "2023.09.25",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.09.25/ISM_catalog.json",
+      "count": 922,
+      "syncedAt": "2026-05-11T05:33:49.913Z"
+    },
+    {
+      "version": "v2023.09.21",
+      "release": "2023.09.21",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.09.21/ISM_catalog.json",
+      "count": 922,
+      "syncedAt": "2026-05-11T05:33:50.209Z"
+    },
+    {
+      "version": "v2023.08.3",
+      "release": "2023.08.3",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.08.3/ISM_catalog.json",
+      "count": 907,
+      "syncedAt": "2026-05-11T05:33:50.513Z"
+    },
+    {
+      "version": "v2023.06.29",
+      "release": "2023.06.29",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.06.29/ISM_catalog.json",
+      "count": 907,
+      "syncedAt": "2026-05-11T05:33:50.822Z"
+    },
+    {
+      "version": "v2023.04.12",
+      "release": "2023.04.12",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.04.12/ISM_catalog.json",
+      "count": 901,
+      "syncedAt": "2026-05-11T05:33:51.160Z"
+    },
+    {
+      "version": "v2023.03.5",
+      "release": "2023.03.5",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.03.5/ISM_catalog.json",
+      "count": 901,
+      "syncedAt": "2026-05-11T05:33:51.470Z"
+    },
+    {
+      "version": "v2023.03.3",
+      "release": "2023.03.3",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2023.03.3/ISM_catalog.json",
+      "count": 901,
+      "syncedAt": "2026-05-11T05:33:51.778Z"
+    },
+    {
+      "version": "v2022.12.1",
+      "release": "2022.12.1",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2022.12.1/ISM_catalog.json",
+      "count": 874,
+      "syncedAt": "2026-05-11T05:33:52.075Z"
+    },
+    {
+      "version": "v2022.09.15",
+      "release": "2022.09.15",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2022.09.15/ISM_catalog.json",
+      "count": 861,
+      "syncedAt": "2026-05-11T05:33:52.380Z"
+    },
+    {
+      "version": "v2022.09.14",
+      "release": "2022.09.14",
+      "title": "Information Security Manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2022.09.14/ISM_catalog.json",
+      "count": 844,
+      "syncedAt": "2026-05-11T05:33:52.676Z"
+    }
+  ]
+}

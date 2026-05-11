@@ -1,24 +1,52 @@
 {
   "name": "ism-search",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start"
+    "postbuild": "node scripts/standalone-assets.mjs",
+    "start": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
+    "lint": "eslint .",
+    "sync:ism": "node scripts/sync-ism.mjs",
+    "sync:acsc": "node scripts/sync-acsc-advisories.mjs",
+    "sync:index": "ISM_RELEASE_COUNT=all MEILI_HOST=http://localhost:7700 MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-local_dev_master_key_change_me} node scripts/sync-ism.mjs",
+    "jobs:worker": "node scripts/work-jobs.mjs",
+    "screenshots": "node scripts/capture-screenshots.mjs",
+    "ollama:pull": "docker compose exec ollama ollama pull llama3.2:3b",
+    "docker:up": "docker compose up --build"
+  },
+  "engines": {
+    "node": ">=24 <25"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-brands-svg-icons": "^5.15.3",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-fontawesome": "^0.1.14",
-    "cors": "^2.8.5",
-    "firebase": "^9.15.0",
-    "firebase-admin": "^11.4.1",
-    "meilisearch": "^0.24.0",
-    "next": "13.5.4",
-    "react": "17.0.1",
-    "react-dom": "^17.0.1",
-    "react-hook-form": "^6.15.4"
+    "@tailwindcss/postcss": "4.3.0",
+    "bullmq": "^5.76.7",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "docx": "^9.6.1",
+    "ioredis": "^5.10.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "1.14.0",
+    "meilisearch": "0.58.0",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "tailwind-merge": "3.6.0",
+    "tailwindcss": "4.3.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.6.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "playwright": "^1.59.1",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "postcss": "8.5.14"
   }
 }
