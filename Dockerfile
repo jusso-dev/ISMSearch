@@ -1,6 +1,7 @@
 FROM node:24.14.1-bookworm-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
+RUN corepack enable && corepack install -g pnpm@latest
 RUN npm ci
 
 FROM node:24.14.1-bookworm-slim AS seeder
@@ -22,12 +23,14 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN corepack enable && corepack install -g pnpm@latest
+RUN pnpm build
 
 FROM node:24.14.1-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable && corepack install -g pnpm@latest
 RUN groupadd --system --gid 1001 nodejs && useradd --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
