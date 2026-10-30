@@ -39,3 +39,4 @@ yarn-error.log*
 # local service data
 /data/ollama
 /data/meili
+*.tsbuildinfo
