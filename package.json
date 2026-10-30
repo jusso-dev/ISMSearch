@@ -30,23 +30,23 @@
     "jspdf": "^4.2.1",
     "lucide-react": "1.14.0",
     "meilisearch": "0.58.0",
-    "next": "16.2.6",
+    "next": "16.4.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "tailwind-merge": "3.6.0",
     "tailwindcss": "4.3.0",
-    "zod": "4.4.3"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "25.6.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.4.1",
     "playwright": "^1.59.1",
     "typescript": "6.0.3"
   },
   "overrides": {
-    "postcss": "8.5.14"
+    "postcss": "8.5.32"
   }
 }

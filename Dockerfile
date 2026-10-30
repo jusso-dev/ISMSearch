@@ -1,24 +1,24 @@
-FROM node:24.14.1-bookworm-slim AS deps
+FROM node:24.22.1-bookworm-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN corepack enable && corepack install -g pnpm@latest
 RUN npm ci
 
-FROM node:24.14.1-bookworm-slim AS seeder
+FROM node:24.22.1-bookworm-slim AS seeder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY scripts ./scripts
 CMD ["sh", "-lc", "node scripts/sync-ism.mjs && node scripts/sync-acsc-advisories.mjs"]
 
-FROM node:24.14.1-bookworm-slim AS worker
+FROM node:24.22.1-bookworm-slim AS worker
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY scripts ./scripts
 CMD ["node", "scripts/work-jobs.mjs"]
 
-FROM node:24.14.1-bookworm-slim AS builder
+FROM node:24.22.1-bookworm-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
@@ -26,7 +26,7 @@ COPY . .
 RUN corepack enable && corepack install -g pnpm@latest
 RUN pnpm build
 
-FROM node:24.14.1-bookworm-slim AS runner
+FROM node:24.22.1-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
