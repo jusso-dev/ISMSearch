@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { z } from "zod";
+import { ollamaNdjsonResponse, textFallbackResponse } from "@/lib/ndjson";
 import { createOllamaStream } from "@/lib/ollama";
 import { clientIp, checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
-import { parseJson, PolicyType, validationError } from "@/lib/validation";
+import { parseJson, PolicyType, requestErrorResponse } from "@/lib/validation";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const PolicyBody = z.object({
   policyType: PolicyType,
@@ -103,6 +107,10 @@ Required sections:
 8. ISM alignment notes`;
 }
 
+/**
+ * Streams NDJSON events: meta, token*, optional error, done (exactly once).
+ * Validation / rate-limit failures are plain JSON with 400/413/429.
+ */
 export async function POST(request: NextRequest) {
   const rateLimit = checkRateLimit(`policy:${clientIp(request)}`, 10, 60_000);
   if (!rateLimit.allowed) return rateLimitResponse(rateLimit.resetAt);
@@ -111,79 +119,37 @@ export async function POST(request: NextRequest) {
   try {
     parsed = await parseJson(request, PolicyBody);
   } catch (error) {
-    return NextResponse.json(validationError(error), { status: 400 });
+    return requestErrorResponse(error);
   }
 
   const title = policyTitle(parsed.policyType);
   const generatedAt = new Date().toISOString();
 
   try {
-    const generated = await createOllamaStream(buildPrompt(parsed), 0.25);
-    return streamOllamaResponse(generated.body, {
-      type: "meta",
-      ...parsed,
-      model: generated.model,
-      degraded: false,
-      title,
-      generatedAt,
-    });
+    const generated = await createOllamaStream(buildPrompt(parsed), 0.25, request.signal);
+    return ollamaNdjsonResponse(
+      generated.body,
+      {
+        type: "meta",
+        ...parsed,
+        model: generated.model,
+        degraded: false,
+        title,
+        generatedAt,
+      },
+      { firstChunkTimeoutMs: generated.firstChunkTimeoutMs, idleTimeoutMs: generated.idleTimeoutMs },
+    );
   } catch {
-    return streamTextFallback({
-      type: "meta",
-      ...parsed,
-      model: null,
-      degraded: true,
-      title,
-      generatedAt,
-    }, fallbackPolicy(parsed));
+    return textFallbackResponse(
+      {
+        type: "meta",
+        ...parsed,
+        model: null,
+        degraded: true,
+        title,
+        generatedAt,
+      },
+      fallbackPolicy(parsed),
+    );
   }
-}
-
-function encodeEvent(value: unknown) {
-  return `${JSON.stringify(value)}\n`;
-}
-
-function streamTextFallback(meta: Record<string, unknown>, text: string) {
-  const encoder = new TextEncoder();
-  return new Response(
-    new ReadableStream({
-      start(controller) {
-        controller.enqueue(encoder.encode(encodeEvent(meta)));
-        controller.enqueue(encoder.encode(encodeEvent({ type: "token", token: text })));
-        controller.enqueue(encoder.encode(encodeEvent({ type: "done" })));
-        controller.close();
-      },
-    }),
-    { headers: { "content-type": "application/x-ndjson" } },
-  );
-}
-
-function streamOllamaResponse(body: ReadableStream<Uint8Array>, meta: Record<string, unknown>) {
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-  return new Response(
-    new ReadableStream({
-      async start(controller) {
-        controller.enqueue(encoder.encode(encodeEvent(meta)));
-        const reader = body.getReader();
-        let buffer = "";
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            const json = JSON.parse(line) as { response?: string; done?: boolean };
-            if (json.response) controller.enqueue(encoder.encode(encodeEvent({ type: "token", token: json.response })));
-            if (json.done) controller.enqueue(encoder.encode(encodeEvent({ type: "done" })));
-          }
-        }
-        controller.enqueue(encoder.encode(encodeEvent({ type: "done" })));
-        controller.close();
-      },
-    }),
-    { headers: { "content-type": "application/x-ndjson" } },
-  );
 }

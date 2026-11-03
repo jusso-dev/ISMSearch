@@ -4,15 +4,19 @@ import IORedis from "ioredis";
 
 const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379";
 const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
+connection.on("error", (error) => console.error(`Redis connection error: ${error.message}`));
 
 const queues = {
   ism: new Queue("ism-sync", { connection }),
   acsc: new Queue("acsc-advisories-sync", { connection }),
 };
+for (const queue of Object.values(queues)) {
+  queue.on("error", (error) => console.error(`Queue ${queue.name} error: ${error.message}`));
+}
 
 function runScript(job, script, progressLabel) {
   return new Promise((resolve, reject) => {
-    const child = spawn("node", [script], {
+    const child = spawn(process.execPath, [script], {
       cwd: process.cwd(),
       env: process.env,
       stdio: ["ignore", "pipe", "pipe"],
@@ -23,8 +27,8 @@ function runScript(job, script, progressLabel) {
       const text = chunk.toString();
       output += text;
       for (const line of text.split(/\r?\n/).filter(Boolean)) {
-        void job.log(line);
-        if (line.startsWith(progressLabel)) void job.updateProgress(line);
+        void job.log(line).catch(() => undefined);
+        if (line.startsWith(progressLabel)) void job.updateProgress(line).catch(() => undefined);
       }
     });
 
@@ -32,7 +36,7 @@ function runScript(job, script, progressLabel) {
       const text = chunk.toString();
       output += text;
       for (const line of text.split(/\r?\n/).filter(Boolean)) {
-        void job.log(line);
+        void job.log(line).catch(() => undefined);
       }
     });
 
@@ -50,25 +54,42 @@ function runScript(job, script, progressLabel) {
   });
 }
 
+/** Remove schedulers left over from the legacy `repeat` + `jobId` API (or renamed ids). */
+async function removeStaleSchedulers(queue, keepId) {
+  try {
+    for (const scheduler of await queue.getJobSchedulers()) {
+      const key = scheduler.key ?? scheduler.id;
+      if (!key || key === keepId) continue;
+      const removed = await queue.removeJobScheduler(key).catch(() => false);
+      if (!removed) await queue.removeRepeatableByKey(key).catch(() => false);
+      console.log(`Removed stale scheduler ${key} from ${queue.name}`);
+    }
+  } catch (error) {
+    console.error(`Could not inspect schedulers on ${queue.name}: ${error.message}`);
+  }
+}
+
 async function scheduleRecurringJobs() {
-  await queues.ism.add(
-    "refresh-ism-controls",
-    { source: "scheduler" },
+  // Job schedulers are idempotent upserts keyed by id, so restarts do not pile up
+  // duplicate repeatable jobs and cron changes take effect on the next start.
+  await removeStaleSchedulers(queues.ism, "scheduled-ism-refresh");
+  await removeStaleSchedulers(queues.acsc, "scheduled-acsc-refresh");
+  await queues.ism.upsertJobScheduler(
+    "scheduled-ism-refresh",
+    { pattern: process.env.ISM_SYNC_CRON ?? "0 */6 * * *" },
     {
-      jobId: "scheduled-ism-refresh",
-      repeat: { pattern: process.env.ISM_SYNC_CRON ?? "0 */6 * * *" },
-      removeOnComplete: 20,
-      removeOnFail: 20,
+      name: "refresh-ism-controls",
+      data: { source: "scheduler" },
+      opts: { removeOnComplete: 20, removeOnFail: 20 },
     },
   );
-  await queues.acsc.add(
-    "refresh-acsc-advisories",
-    { source: "scheduler" },
+  await queues.acsc.upsertJobScheduler(
+    "scheduled-acsc-refresh",
+    { pattern: process.env.ACSC_SYNC_CRON ?? "*/30 * * * *" },
     {
-      jobId: "scheduled-acsc-refresh",
-      repeat: { pattern: process.env.ACSC_SYNC_CRON ?? "*/30 * * * *" },
-      removeOnComplete: 30,
-      removeOnFail: 30,
+      name: "refresh-acsc-advisories",
+      data: { source: "scheduler" },
+      opts: { removeOnComplete: 30, removeOnFail: 30 },
     },
   );
 }
@@ -94,18 +115,33 @@ const workers = [
 
 for (const worker of workers) {
   worker.on("completed", (job) => console.log(`${job.queueName} job ${job.id} completed`));
-  worker.on("failed", (job, error) => console.error(`${job?.queueName ?? "unknown"} job ${job?.id ?? "unknown"} failed`, error));
+  worker.on("failed", (job, error) =>
+    console.error(`${job?.queueName ?? "unknown"} job ${job?.id ?? "unknown"} failed: ${error?.message ?? error}`),
+  );
+  worker.on("error", (error) => console.error(`Worker ${worker.name} error: ${error.message}`));
 }
+
+let shuttingDown = null;
+function shutdown(signal) {
+  if (shuttingDown) return shuttingDown;
+  console.log(`Received ${signal}; closing workers.`);
+  shuttingDown = (async () => {
+    let exitCode = 0;
+    try {
+      await Promise.allSettled(workers.map((worker) => worker.close()));
+      await Promise.allSettled(Object.values(queues).map((queue) => queue.close()));
+      await connection.quit().catch(() => connection.disconnect());
+    } catch (error) {
+      console.error(`Shutdown error: ${error?.message ?? error}`);
+      exitCode = 1;
+    }
+    process.exit(exitCode);
+  })();
+  return shuttingDown;
+}
+
+process.on("SIGINT", () => void shutdown("SIGINT"));
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
 
 await scheduleRecurringJobs();
 console.log(`BullMQ workers ready on ${REDIS_URL}.`);
-
-const shutdown = async () => {
-  await Promise.all(workers.map((worker) => worker.close()));
-  await Promise.all(Object.values(queues).map((queue) => queue.close()));
-  await connection.quit();
-  process.exit(0);
-};
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);

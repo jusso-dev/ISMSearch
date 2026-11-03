@@ -1,9 +1,30 @@
+# VCS / tooling
+.git
+.github
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# Dependencies and build output (rebuilt inside the image)
 node_modules
 .next
-.git
-.env*
+out
+site-dist
+coverage
+*.tsbuildinfo
+npm-debug.log*
+
+# Local secrets and service data
+.env
+.env.*
+!.env.example
 data/meili
 data/ollama
-npm-debug.log*
+data/**/*.tmp-*
+
+# Not needed in images
+docs
+tests
 README.md
 screenshot.jpg

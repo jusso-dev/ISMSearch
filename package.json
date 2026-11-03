@@ -7,7 +7,7 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "postbuild": "node scripts/standalone-assets.mjs",
-    "start": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
+    "start": "HOSTNAME=${HOSTNAME:-0.0.0.0} ISM_DATA_DIR=\"${ISM_DATA_DIR:-$PWD/data/ism}\" ACSC_DATA_DIR=\"${ACSC_DATA_DIR:-$PWD/data/acsc}\" node .next/standalone/server.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"tests/**/*.test.*\"",

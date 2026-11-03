@@ -12,7 +12,7 @@ const NAV_ITEMS: { key: NavKey; href: string; label: string; icon: React.ReactNo
   { key: "health", href: "/health", label: "Health", icon: <HeartPulse size={14} /> },
 ];
 
-export function AppNav({ active }: { active: NavKey }) {
+export function AppNav({ active }: { active?: NavKey }) {
   return (
     <nav aria-label="Primary" className="flex flex-wrap justify-end gap-2 max-sm:justify-start">
       {NAV_ITEMS.map((item) => (

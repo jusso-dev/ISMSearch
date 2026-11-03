@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  verify:
+    name: Lint, typecheck, test and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build web app
+        run: pnpm build
+
+      - name: Build static Pages site
+        run: pnpm build:site --check
+
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
+
+  docker:
+    name: Docker build and smoke test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      MEILI_MASTER_KEY: ci-only-master-key-not-secret-0123456789
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate Compose file
+        run: docker compose config -q
+
+      - name: Build seeder and worker images
+        run: |
+          docker build --target seeder -t ismsearch-seed:ci .
+          docker build --target worker -t ismsearch-worker:ci .
+
+      - name: Build web image
+        run: docker build -t ismsearch-web:ci .
+
+      - name: Smoke test web image
+        run: |
+          docker run -d --name ismsearch-web --read-only --tmpfs /tmp --cap-drop ALL \
+            --security-opt no-new-privileges:true -p 3000:3000 ismsearch-web:ci
+          for path in / /api/versions "/api/search?q=multi-factor+authentication" /advisories /health; do
+            for attempt in $(seq 1 30); do
+              if curl -fsS -o /dev/null "http://localhost:3000${path}"; then
+                echo "OK ${path}"
+                continue 2
+              fi
+              sleep 2
+            done
+            echo "::error::Smoke test failed for ${path}"
+            docker logs ismsearch-web
+            exit 1
+          done
+          curl -fsS "http://localhost:3000/api/search?q=ISM-0974" | grep -q '"hits"'
+
+      - name: Clean up
+        if: always()
+        run: docker rm -f ismsearch-web || true

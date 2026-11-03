@@ -1,225 +1,149 @@
-import { mkdir, writeFile } from "node:fs/promises";
+// Sync ISM OSCAL releases into data/ism (and optionally Meilisearch).
+//
+// Release files are snapshots of immutable git tags, so a release already on disk is
+// never re-downloaded (set ISM_FORCE_RESYNC=1 to override). The manifest is always the
+// union of every usable release file on disk, so it never shrinks because discovery
+// failed or ISM_RELEASE_COUNT is set. ISM_RELEASE_COUNT ("all" by default) only caps how
+// many *new* releases are downloaded in a single run, newest first.
+//
+// Environment:
+//   ISM_DATA_DIR        output directory (default ./data/ism)
+//   ISM_RELEASE_COUNT   "all" or a positive integer cap on new downloads
+//   ISM_FORCE_RESYNC    "1" to re-download releases that already exist
+//   ISM_STRICT          "0" to downgrade validation failures of GitHub-tagged releases to warnings
+//   GITHUB_TOKEN        optional, raises the GitHub API rate limit for tag discovery
+//   MEILI_HOST          when set, index all releases into Meilisearch (MEILI_MASTER_KEY)
+import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { Meilisearch } from "meilisearch";
+import { fetchText } from "./lib/http.mjs";
+import { readJsonIfExists, writeFileAtomic, serializeJson } from "./lib/io.mjs";
+import {
+  GITHUB_REPO,
+  buildCandidates,
+  buildManifest,
+  chooseManifest,
+  extractVersionsFromCyberPage,
+  extractVersionsFromRss,
+  isUsableReleaseFile,
+  normalizeCatalog,
+  parseGithubTags,
+  parseReleaseLimit,
+  planDownloads,
+  releaseSummary,
+  sortVersionsDesc,
+  sourceUrlFor,
+  validateRelease,
+} from "./lib/ism.mjs";
+import { errorMessage, fail, warn } from "./lib/log.mjs";
 
 const PROJECT_ROOT = process.cwd();
 const DATA_DIR = process.env.ISM_DATA_DIR ?? path.join(PROJECT_ROOT, "data", "ism");
-const RELEASE_COUNT = process.env.ISM_RELEASE_COUNT ?? "all";
-const GITHUB_REPO = "AustralianCyberSecurityCentre/ism-oscal";
-const GITHUB_RAW = `https://raw.githubusercontent.com/${GITHUB_REPO}`;
-const CYBER_OSCAL_PAGE =
-  "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/ism-oscal-releases";
+const RELEASES_DIR = path.join(DATA_DIR, "releases");
+const MANIFEST_PATH = path.join(DATA_DIR, "manifest.json");
+const RELEASE_LIMIT = parseReleaseLimit(process.env.ISM_RELEASE_COUNT ?? "all");
+const FORCE = process.env.ISM_FORCE_RESYNC === "1";
+const STRICT = process.env.ISM_STRICT !== "0";
+const CYBER_OSCAL_PAGE = "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/ism-oscal-releases";
 const CYBER_NEWS_RSS = process.env.CYBER_RSS_URL ?? "https://www.cyber.gov.au/rss/news";
-const FALLBACK_RELEASES = [
-  "v2026.03.24",
-  "v2025.12.9",
-  "v2025.10.8",
-  "v2025.09.15",
-  "v2025.09.10",
-  "v2025.07.16",
-  "v2025.03.31",
-  "v2024.12.19",
-];
+// cyber.gov.au's WAF tarpits user agents containing "http"/"github", so keep this plain.
+const USER_AGENT = process.env.SYNC_USER_AGENT ?? "ISMSearch ISM sync (jusso-dev/ISMSearch)";
 
-const APPLICABILITY_LABELS = {
-  NC: "OFFICIAL",
-  OS: "OFFICIAL: Sensitive",
-  P: "PROTECTED",
-  S: "SECRET",
-  TS: "TOP SECRET",
-};
+const baseHeaders = { "user-agent": USER_AGENT };
 
-async function fetchText(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "user-agent": "ISMSearch local sync",
-      accept: "application/json,text/html,application/rss+xml,*/*",
-      ...(options.headers ?? {}),
-    },
-  });
+async function discoverGithubTags() {
+  const headers = {
+    ...baseHeaders,
+    accept: "application/vnd.github+json",
+    "x-github-api-version": "2022-11-28",
+  };
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
-  }
-
-  return response.text();
-}
-
-async function discoverFromCyberPage() {
-  const html = await fetchText(CYBER_OSCAL_PAGE);
-  return [...html.matchAll(/ISM OSCAL v(\d{4}\.\d{2}\.\d{1,2})/g)].map(
-    (match) => `v${match[1]}`,
-  );
-}
-
-async function discoverFromGithubTags() {
   const tags = [];
   for (let page = 1; page <= 20; page += 1) {
-    const text = await fetchText(
-      `https://api.github.com/repos/${GITHUB_REPO}/tags?per_page=100&page=${page}`,
-      {
-        headers: { accept: "application/vnd.github+json" },
-      },
-    );
-    const pageTags = JSON.parse(text);
-    if (!Array.isArray(pageTags) || pageTags.length === 0) break;
-    tags.push(...pageTags);
+    const text = await fetchText(`https://api.github.com/repos/${GITHUB_REPO}/tags?per_page=100&page=${page}`, {
+      headers,
+    });
+    const json = JSON.parse(text);
+    if (!Array.isArray(json)) throw new Error("GitHub tags API returned a non-array response");
+    tags.push(...parseGithubTags(json));
+    if (json.length < 100) break;
   }
-
-  return tags.map((tag) => tag.name).filter((name) => /^v\d{4}\.\d{2}\.\d{1,2}$/.test(name));
+  return tags;
 }
 
-async function discoverFromRss() {
-  const xml = await fetchText(CYBER_NEWS_RSS);
-  return [...xml.matchAll(/ISM[^<]*v?(\d{4}\.\d{2}\.\d{1,2})/gi)].map(
-    (match) => `v${match[1]}`,
-  );
-}
-
-async function discoverReleases() {
-  const discovered = [];
-  for (const discoverer of [discoverFromGithubTags, discoverFromCyberPage, discoverFromRss]) {
+async function discoverScraped() {
+  const versions = [];
+  const sources = [
+    [CYBER_OSCAL_PAGE, extractVersionsFromCyberPage, "text/html"],
+    [CYBER_NEWS_RSS, extractVersionsFromRss, "application/rss+xml,application/xml"],
+  ];
+  for (const [url, extract, accept] of sources) {
     try {
-      discovered.push(...(await discoverer()));
+      versions.push(...extract(await fetchText(url, { headers: { ...baseHeaders, accept } })));
     } catch (error) {
-      console.warn(error.message);
+      warn(`ISM discovery via ${url} failed: ${errorMessage(error)}`);
     }
   }
-
-  const releases = [...new Set([...discovered, ...FALLBACK_RELEASES])].sort(compareVersions).reverse();
-  if (RELEASE_COUNT === "all") return releases;
-
-  const count = Number(RELEASE_COUNT);
-  return Number.isFinite(count) && count > 0 ? releases.slice(0, count) : releases;
+  return versions;
 }
 
-function compareVersions(a, b) {
-  const left = a.replace(/^v/, "").split(".").map(Number);
-  const right = b.replace(/^v/, "").split(".").map(Number);
-  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
-    const delta = (left[index] ?? 0) - (right[index] ?? 0);
-    if (delta !== 0) return delta;
+async function listReleaseFiles() {
+  try {
+    return (await readdir(RELEASES_DIR)).filter((name) => /^v[\d.]+\.json$/.test(name));
+  } catch (error) {
+    if (error?.code === "ENOENT") return [];
+    throw error;
   }
-  return 0;
 }
 
-function propValues(node, name) {
-  return (node.props ?? []).filter((prop) => prop.name === name).map((prop) => prop.value);
-}
-
-function firstProp(node, name) {
-  return propValues(node, name)[0] ?? null;
-}
-
-function flattenParts(parts = []) {
-  return parts.flatMap((part) => [
-    {
-      name: part.name,
-      prose: part.prose ?? "",
-    },
-    ...flattenParts(part.parts ?? []),
-  ]);
-}
-
-function cleanControlTitle(control) {
-  const controlId = control.id.toUpperCase();
-  if (!control.title || /^Control:\s*ism-\d+/i.test(control.title)) {
-    return controlId;
-  }
-  return control.title;
-}
-
-function documentId(version, controlId) {
-  return `${version}_${controlId}`.replace(/[^a-zA-Z0-9_-]/g, "_");
-}
-
-function normalizeControl(control, pathParts, version) {
-  const proseParts = flattenParts(control.parts ?? []);
-  const statement = proseParts.find((part) => part.name === "statement")?.prose ?? "";
-  const body = proseParts.map((part) => part.prose).filter(Boolean).join("\n\n");
-  const applicability = propValues(control, "applicability");
-  const essentialEight = propValues(control, "essential-eight-applicability");
-  const controlId = control.id.toUpperCase();
-
-  return {
-    objectID: documentId(version, control.id),
-    id: control.id,
-    controlId,
-    version,
-    release: version.replace(/^v/, ""),
-    title: cleanControlTitle(control),
-    chapter: pathParts[0] ?? "ISM",
-    section: pathParts.slice(1).join(" / ") || pathParts[0] || "ISM",
-    topic: pathParts.at(-1) ?? "ISM",
-    path: pathParts,
-    statement,
-    body,
-    text: [controlId, cleanControlTitle(control), pathParts.join(" "), body].filter(Boolean).join("\n"),
-    revision: firstProp(control, "revision"),
-    updated: firstProp(control, "updated"),
-    applicability,
-    applicabilityLabels: applicability.map((value) => APPLICABILITY_LABELS[value] ?? value),
-    essentialEight,
-    sortId: firstProp(control, "sort-id"),
-  };
-}
-
-function normalizeCatalog(version, rawCatalog) {
-  const controls = [];
-
-  function walk(node, pathParts = []) {
-    const nextPath = node.title ? [...pathParts, node.title] : pathParts;
-    for (const control of node.controls ?? []) {
-      controls.push(normalizeControl(control, nextPath, version));
-    }
-    for (const group of node.groups ?? []) {
-      walk(group, nextPath);
+/** Load every usable release on disk. Returns Map<version, summary>. */
+async function loadExistingSummaries() {
+  const summaries = new Map();
+  for (const file of await listReleaseFiles()) {
+    const snapshot = await readJsonIfExists(path.join(RELEASES_DIR, file));
+    if (isUsableReleaseFile(snapshot) && `${snapshot.version}.json` === file) {
+      summaries.set(snapshot.version, releaseSummary(snapshot));
+    } else {
+      warn(`Ignoring unusable release file ${file}`);
     }
   }
-
-  walk(rawCatalog.catalog);
-
-  return {
-    version,
-    release: version.replace(/^v/, ""),
-    title: rawCatalog.catalog?.metadata?.title ?? "Information security manual",
-    sourceUrl: `${GITHUB_RAW}/${version}/ISM_catalog.json`,
-    syncedAt: new Date().toISOString(),
-    count: controls.length,
-    controls,
-  };
+  return summaries;
 }
 
-async function downloadCatalog(version) {
-  const text = await fetchText(`${GITHUB_RAW}/${version}/ISM_catalog.json`);
-  return normalizeCatalog(version, JSON.parse(text));
+async function fetchCatalogText(version) {
+  return fetchText(sourceUrlFor(version), {
+    headers: { ...baseHeaders, accept: "application/json" },
+    timeoutMs: 120_000,
+  });
 }
 
-async function writeSnapshot(snapshot) {
-  await mkdir(path.join(DATA_DIR, "releases"), { recursive: true });
-  await writeFile(
-    path.join(DATA_DIR, "releases", `${snapshot.version}.json`),
-    JSON.stringify(snapshot, null, 2),
-  );
+/** Parse and normalise a downloaded catalog; returns { snapshot } or { problems }. */
+function buildSnapshot(version, text, previous) {
+  let snapshot;
+  try {
+    // Preserve the original syncedAt when force re-syncing an existing release.
+    snapshot = normalizeCatalog(version, JSON.parse(text), { syncedAt: previous?.syncedAt ?? new Date().toISOString() });
+  } catch (error) {
+    return { problems: [errorMessage(error)] };
+  }
+  const problems = validateRelease(snapshot);
+  return problems.length > 0 ? { problems } : { snapshot };
 }
 
-async function indexSnapshots(snapshots) {
-  const host = process.env.MEILI_HOST ?? process.env.SEARCH_BASE_URL;
-  const apiKey = process.env.MEILI_MASTER_KEY ?? process.env.API_KEY;
+async function indexAllReleases(versions) {
+  const host = process.env.MEILI_HOST;
   if (!host) {
     console.log("Skipping Meilisearch indexing because MEILI_HOST is not set.");
     return;
   }
 
-  const client = new Meilisearch({ host, apiKey });
+  const { Meilisearch } = await import("meilisearch");
+  const client = new Meilisearch({ host, apiKey: process.env.MEILI_MASTER_KEY });
   const index = client.index("ism-controls");
-  const documents = snapshots.flatMap((snapshot) => snapshot.controls);
   const waitForTask = async (task) => {
-    if (!task) return;
-    const uid = task.taskUid ?? task.uid;
+    const uid = task?.taskUid ?? task?.uid;
     if (uid == null) return;
-    const result = await client.tasks.waitForTask(uid);
+    const result = await client.tasks.waitForTask(uid, { timeout: 600_000, interval: 250 });
     if (result.status === "failed") {
       throw new Error(result.error?.message ?? `Meilisearch task ${uid} failed`);
     }
@@ -242,43 +166,100 @@ async function indexSnapshots(snapshots) {
   );
   await waitForTask(await index.updateSortableAttributes(["controlId", "updated", "release"]));
 
-  for (let indexOffset = 0; indexOffset < documents.length; indexOffset += 1000) {
-    await waitForTask(await index.addDocuments(documents.slice(indexOffset, indexOffset + 1000), { primaryKey: "objectID" }));
+  let total = 0;
+  for (const version of versions) {
+    const snapshot = await readJsonIfExists(path.join(RELEASES_DIR, `${version}.json`));
+    if (!isUsableReleaseFile(snapshot)) continue;
+    for (let offset = 0; offset < snapshot.controls.length; offset += 1000) {
+      await waitForTask(
+        await index.addDocuments(snapshot.controls.slice(offset, offset + 1000), { primaryKey: "objectID" }),
+      );
+    }
+    total += snapshot.controls.length;
+  }
+  console.log(`Indexed ${total} controls from ${versions.length} releases into Meilisearch at ${host}.`);
+}
+
+async function main() {
+  const existing = await loadExistingSummaries();
+
+  let tags = [];
+  let discoveryFailed = false;
+  try {
+    tags = await discoverGithubTags();
+    if (tags.length === 0) throw new Error("GitHub returned no ISM release tags");
+  } catch (error) {
+    warn(`GitHub tag discovery failed: ${errorMessage(error)}`);
+    discoveryFailed = true;
+  }
+  const scraped = await discoverScraped();
+  const candidates = buildCandidates({ tags, scraped });
+  const downloads = planDownloads(candidates, existing.keys(), { force: FORCE, limit: RELEASE_LIMIT });
+
+  console.log(
+    `Discovered ${candidates.length} ISM releases (${tags.length} GitHub tags); ${existing.size} on disk; ` +
+      `${downloads.length} to download${downloads.length ? `: ${downloads.map((c) => c.version).join(", ")}` : ""}.`,
+  );
+
+  let corrupt = 0;
+  let failedDownloads = 0;
+  for (const { version, confirmed } of downloads) {
+    let text;
+    try {
+      text = await fetchCatalogText(version);
+    } catch (error) {
+      // Unconfirmed scraped candidates may not be actual tags, but a failed confirmed
+      // download means this run cannot claim the archive is current.
+      warn(`Skipping ${version}${confirmed ? "" : " (not a GitHub tag)"}: ${errorMessage(error)}`);
+      if (confirmed) failedDownloads += 1;
+      continue;
+    }
+
+    const { snapshot, problems } = buildSnapshot(version, text, existing.get(version));
+    if (!snapshot) {
+      const message = `Rejected ${version}${confirmed ? "" : " (not a GitHub tag)"}: ${problems.join("; ")}`;
+      if (confirmed && STRICT) {
+        fail(message);
+        corrupt += 1;
+      } else {
+        warn(message);
+      }
+      continue;
+    }
+
+    await writeFileAtomic(path.join(RELEASES_DIR, `${version}.json`), serializeJson(snapshot));
+    existing.set(version, releaseSummary(snapshot));
+    console.log(`Wrote ${snapshot.version} with ${snapshot.count} controls.`);
   }
 
-  console.log(`Indexed ${documents.length} controls into Meilisearch at ${host}.`);
+  if (existing.size === 0) {
+    fail("No usable ISM releases on disk; refusing to write an empty manifest.");
+    process.exitCode = 1;
+    return;
+  }
+
+  const previous = await readJsonIfExists(MANIFEST_PATH);
+  const { manifest, changed } = chooseManifest(
+    previous,
+    buildManifest(existing.values(), { generatedAt: new Date().toISOString(), rssFeed: CYBER_NEWS_RSS }),
+  );
+  if (changed) {
+    await writeFileAtomic(MANIFEST_PATH, serializeJson(manifest));
+    console.log(`Wrote manifest with ${manifest.releases.length} releases (latest ${manifest.releases[0].version}).`);
+  } else {
+    console.log(`Manifest unchanged (${manifest.releases.length} releases, latest ${manifest.releases[0].version}).`);
+  }
+
+  await indexAllReleases(sortVersionsDesc(existing.keys()));
+
+  if (corrupt > 0) {
+    fail(`${corrupt} GitHub-tagged release(s) failed validation; see errors above.`);
+    process.exitCode = 1;
+  }
+  if (discoveryFailed || failedDownloads > 0) {
+    fail("ISM sync incomplete: release discovery or a confirmed download failed.");
+    process.exitCode = 1;
+  }
 }
 
-const releases = await discoverReleases();
-console.log(`Syncing ISM releases: ${releases.join(", ")}`);
-
-const snapshots = [];
-for (const release of releases) {
-  const snapshot = await downloadCatalog(release);
-  await writeSnapshot(snapshot);
-  snapshots.push(snapshot);
-  console.log(`Wrote ${snapshot.version} with ${snapshot.count} controls.`);
-}
-
-await writeFile(
-  path.join(DATA_DIR, "manifest.json"),
-  JSON.stringify(
-    {
-      generatedAt: new Date().toISOString(),
-      source: "AustralianCyberSecurityCentre/ism-oscal",
-      rssFeed: CYBER_NEWS_RSS,
-      releases: snapshots.map(({ version, release, title, sourceUrl, count, syncedAt }) => ({
-        version,
-        release,
-        title,
-        sourceUrl,
-        count,
-        syncedAt,
-      })),
-    },
-    null,
-    2,
-  ),
-);
-
-await indexSnapshots(snapshots);
+await main();
