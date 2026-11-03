@@ -40,3 +40,6 @@ yarn-error.log*
 /data/ollama
 /data/meili
 *.tsbuildinfo
+
+# static Pages build output
+/site-dist/

@@ -9,9 +9,12 @@
     "postbuild": "node scripts/standalone-assets.mjs",
     "start": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"tests/**/*.test.*\"",
     "sync:ism": "node scripts/sync-ism.mjs",
     "sync:acsc": "node scripts/sync-acsc-advisories.mjs",
-    "sync:index": "ISM_RELEASE_COUNT=all MEILI_HOST=http://localhost:7700 MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-local_dev_master_key_change_me} node scripts/sync-ism.mjs",
+    "sync:index": "ISM_RELEASE_COUNT=all MEILI_HOST=${MEILI_HOST:-http://localhost:7700} node scripts/sync-ism.mjs",
+    "build:site": "node scripts/build-site.mjs",
     "jobs:worker": "node scripts/work-jobs.mjs",
     "screenshots": "node scripts/capture-screenshots.mjs",
     "ollama:pull": "docker compose exec ollama ollama pull llama3.2:3b",
@@ -38,7 +41,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@types/node": "25.6.2",
+    "@types/node": "24.19.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
@@ -46,7 +49,15 @@
     "playwright": "^1.59.1",
     "typescript": "6.0.3"
   },
-  "overrides": {
-    "postcss": "8.5.32"
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.32"
+    },
+    "ignoredBuiltDependencies": [
+      "core-js",
+      "msgpackr-extract",
+      "unrs-resolver"
+    ]
   }
 }
