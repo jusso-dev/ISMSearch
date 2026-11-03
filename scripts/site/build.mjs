@@ -1,6 +1,6 @@
 // Static site build: reads data/, computes history and diffs, writes HTML,
 // feeds and static JSON API to the output directory.
-import { existsSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -137,12 +137,41 @@ function createDiffCache() {
 
 const json = (value, pretty = false) => `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
 
+// Resolve symlinks in the nearest existing ancestor even when the output does not
+// exist yet. This prevents an alias into the source tree bypassing the guard.
+function canonicalPath(input) {
+  let current = path.resolve(input);
+  const remainder = [];
+  for (;;) {
+    try {
+      return path.resolve(realpathSync(current), ...remainder);
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      const parent = path.dirname(current);
+      if (parent === current) throw error;
+      remainder.unshift(path.basename(current));
+      current = parent;
+    }
+  }
+}
+
+function isWithin(child, parent) {
+  const relative = path.relative(parent, child);
+  return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== ".." && !path.isAbsolute(relative));
+}
+
 function assertSafeOutDir(outDir, guarded) {
   const resolved = path.resolve(outDir);
-  const forbidden = [path.parse(resolved).root, os.homedir(), process.cwd(), ...guarded].map((p) => path.resolve(p));
-  for (const dir of forbidden) {
-    if (resolved === dir || dir.startsWith(resolved + path.sep)) {
+  const canonical = canonicalPath(resolved);
+  const ancestors = [path.parse(canonical).root, os.homedir(), process.cwd()].map(canonicalPath);
+  for (const dir of ancestors) {
+    if (isWithin(dir, canonical)) {
       throw new Error(`Refusing to wipe output directory ${resolved}: it is or contains ${dir}`);
+    }
+  }
+  for (const dir of guarded.map(canonicalPath)) {
+    if (isWithin(dir, canonical) || isWithin(canonical, dir)) {
+      throw new Error(`Refusing to wipe output directory ${resolved}: it overlaps protected directory ${dir}`);
     }
   }
   return resolved;

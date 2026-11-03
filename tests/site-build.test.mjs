@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
@@ -232,6 +232,16 @@ test("output is deterministic and every relative link resolves", async () => {
 });
 
 test("refuses to wipe dangerous output directories", async () => {
+  const manifest = path.join(dataDir, "ism", "manifest.json");
+  const original = await readFile(manifest, "utf8");
   await assert.rejects(buildSite({ dataDir, outDir: tmp, buildTime: BUILD_TIME }), /Refusing to wipe/);
   await assert.rejects(buildSite({ dataDir, outDir: process.cwd(), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  await assert.rejects(buildSite({ dataDir, outDir: path.join(dataDir, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  await assert.rejects(buildSite({ dataDir, outDir: path.join(dataDir, "ism", "new-output"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  await assert.rejects(buildSite({ dataDir, outDir: path.resolve("scripts/site/assets"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  const alias = path.join(tmp, "data-alias");
+  await symlink(dataDir, alias, "dir");
+  await assert.rejects(buildSite({ dataDir, outDir: path.join(alias, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  await assert.rejects(buildSite({ dataDir: alias, outDir: path.join(dataDir, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  assert.equal(await readFile(manifest, "utf8"), original);
 });
