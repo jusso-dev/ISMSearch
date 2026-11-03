@@ -26,6 +26,23 @@ jobs:
         with:
           persist-credentials: false
 
+      # The action's installer uses get.trivy.dev, which may be unreachable on
+      # hosted runners. Fetch the pinned release directly and verify its checksum.
+      - name: Install Trivy
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=0.76.1
+          archive="trivy_${version}_Linux-64bit.tar.gz"
+          base="https://github.com/aquasecurity/trivy/releases/download/v${version}"
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o "$archive" "$base/$archive"
+          curl -fsSL --retry 3 -o checksums.txt "$base/trivy_${version}_checksums.txt"
+          grep "  ${archive}$" checksums.txt | sha256sum --check --strict
+          mkdir -p trivy-bin
+          tar -xzf "$archive" -C trivy-bin trivy
+          echo "$RUNNER_TEMP/trivy-bin" >> "$GITHUB_PATH"
+
       - name: Scan dependencies, secrets, and IaC
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -38,6 +55,7 @@ jobs:
           limit-severities-for-sarif: true
           ignore-unfixed: true
           exit-code: "0"
+          skip-setup-trivy: true
 
       - name: Upload code scanning results
         if: always() && hashFiles('trivy-results.sarif') != ''
