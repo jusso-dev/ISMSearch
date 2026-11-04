@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.3.0",
-    "bullmq": "^5.76.7",
+    "bullmq": "^6.5.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "docx": "^9.6.1",
