@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- base: shared settings -------------------------------------------------------
-FROM node:24.22.1-bookworm-slim AS base
+FROM node:26.13.0-bookworm-slim AS base
 ENV NEXT_TELEMETRY_DISABLED=1 \
     COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     PNPM_HOME=/pnpm \
