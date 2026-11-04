@@ -144,4 +144,4 @@ process.on("SIGINT", () => void shutdown("SIGINT"));
 process.on("SIGTERM", () => void shutdown("SIGTERM"));
 
 await scheduleRecurringJobs();
-console.log(`BullMQ workers ready on ${REDIS_URL}.`);
+console.log("BullMQ workers ready for ism-sync and acsc-advisories-sync.");
