@@ -575,7 +575,7 @@ export function advisoriesPage(ctx, data) {
   const body = html`
 <h1>ACSC alerts and advisories</h1>
 <p class="lede">${plural(items.length, "archived item")} from Cyber.gov.au, newest first. Updated ${formatDateTime(advisories.fetchedAt) ?? "unknown"}.</p>
-${stale ? html`<p class="notice notice-warn" role="note">This advisory archive may be out of date: its last complete refresh is unknown or was more than 14 days before this site was built. Check <a href="https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories" rel="noopener noreferrer" target="_blank">cyber.gov.au</a> for the latest alerts.</p>` : ""}
+${stale ? html`<p class="notice notice-warn" role="note">This advisory archive may be out of date: its last complete refresh is unknown or was more than 14 days before this site was built. Check <a href="https://www.cyber.gov.au/alerts-and-advisories" rel="noopener noreferrer" target="_blank">cyber.gov.au</a> for the latest alerts.</p>` : ""}
 <p class="actions"><a class="button button-quiet" href="${r("advisories.xml")}">RSS feed</a> <a class="button button-quiet" href="${r("advisories.json")}">JSON Feed</a></p>
 <div id="advisory-filters" class="filter-chips" hidden>
   <div class="chip-group" role="group" aria-labelledby="type-filter-label">

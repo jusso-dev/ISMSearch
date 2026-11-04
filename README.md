@@ -89,6 +89,9 @@ The full screenshot set is collapsed so the project overview stays easy to scan.
 <https://jusso-dev.github.io/ISMSearch/> on every push to `main` that touches `data/` or the site generator, and again after
 each nightly sync.
 
+The builder clears its output directory before writing. It refuses to overwrite a non-empty directory unless it contains
+the `.nojekyll` marker from a previous site build, and rejects paths that overlap the data or site source directories.
+
 | Path | Contents |
 | --- | --- |
 | `/` | Client-side search over the latest release with classification, Essential Eight and chapter filters, shareable URLs and CSV download. |
@@ -120,8 +123,8 @@ All synced data is committed to this repository, so a fresh clone works offline.
 | `data/ism/manifest.json` | The union of every valid release snapshot on disk, newest first. |
 | `data/acsc/advisories.json` | The rolling ACSC alerts and advisories archive (up to 500 items). |
 
-`pnpm sync:ism` (`scripts/sync-ism.mjs`) finds release tags from the `AustralianCyberSecurityCentre/ism-oscal` GitHub
-repository, then confirms them against the Cyber.gov.au ISM OSCAL page and RSS feed.
+`pnpm sync:ism` (`scripts/sync-ism.mjs`) finds release tags in the `AustralianCyberSecurityCentre/ism-oscal` GitHub
+repository. Versions found only on the Cyber.gov.au ISM OSCAL page and RSS feed are added as unconfirmed candidates.
 
 - Releases are immutable tags, so only new releases are downloaded. Set `ISM_FORCE_RESYNC=1` to refetch them all.
 - A release that fails to download or validate is skipped; failure to discover GitHub tags or download or validate a confirmed release makes the sync fail. A release is rejected if it has fewer than 500 controls.

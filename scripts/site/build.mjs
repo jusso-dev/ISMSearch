@@ -1,6 +1,6 @@
 // Static site build: reads data/, computes history and diffs, writes HTML,
 // feeds and static JSON API to the output directory.
-import { existsSync, realpathSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -173,6 +173,14 @@ function assertSafeOutDir(outDir, guarded) {
     if (isWithin(dir, canonical) || isWithin(canonical, dir)) {
       throw new Error(`Refusing to wipe output directory ${resolved}: it overlaps protected directory ${dir}`);
     }
+  }
+  try {
+    const entries = readdirSync(canonical, { withFileTypes: true });
+    if (entries.length && !entries.some((entry) => entry.name === ".nojekyll" && entry.isFile())) {
+      throw new Error(`Refusing to wipe output directory ${resolved}: non-empty directory has no .nojekyll marker`);
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
   }
   return resolved;
 }

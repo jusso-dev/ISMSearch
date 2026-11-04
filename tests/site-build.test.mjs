@@ -170,6 +170,7 @@ test("data is escaped and unsafe advisory links are not linked", async () => {
   assert.ok(!advisories.includes('href="https://www.cyber.gov.au@evil'));
   assert.ok(!advisories.includes('href="javascript:'));
   assert.ok(advisories.includes("may be out of date"), "stale warning expected (fetched > 14 days before build)");
+  assert.ok(advisories.includes('href="https://www.cyber.gov.au/alerts-and-advisories"'));
   const control = await readFile(path.join(outDir, "controls/ISM-0001/index.html"), "utf8");
   assert.ok(!control.includes("<script>alert(1)"));
   assert.ok(control.includes("&lt;/script&gt;"));
@@ -244,4 +245,18 @@ test("refuses to wipe dangerous output directories", async () => {
   await assert.rejects(buildSite({ dataDir, outDir: path.join(alias, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
   await assert.rejects(buildSite({ dataDir: alias, outDir: path.join(dataDir, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
   assert.equal(await readFile(manifest, "utf8"), original);
+});
+
+test("protects non-empty output directories without a site marker", async () => {
+  const unrelated = path.join(tmp, "unrelated");
+  await mkdir(unrelated);
+  const file = path.join(unrelated, "important.txt");
+  await writeFile(file, "keep this");
+  await assert.rejects(buildSite({ dataDir, outDir: unrelated, buildTime: BUILD_TIME }), /no \.nojekyll marker/);
+  assert.equal(await readFile(file, "utf8"), "keep this");
+
+  const empty = path.join(tmp, "empty-output");
+  await mkdir(empty);
+  await buildSite({ dataDir, outDir: empty, buildTime: BUILD_TIME, warn: () => {} });
+  assert.ok(existsSync(path.join(empty, ".nojekyll")));
 });
