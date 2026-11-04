@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
@@ -244,6 +244,12 @@ test("refuses to wipe dangerous output directories", async () => {
   await symlink(dataDir, alias, "dir");
   await assert.rejects(buildSite({ dataDir, outDir: path.join(alias, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
   await assert.rejects(buildSite({ dataDir: alias, outDir: path.join(dataDir, "ism"), buildTime: BUILD_TIME }), /Refusing to wipe/);
+  const outside = path.join(tmp, "outside");
+  await mkdir(outside);
+  const linkInData = path.join(dataDir, "ism", "output-link");
+  await symlink(outside, linkInData, "dir");
+  await assert.rejects(buildSite({ dataDir, outDir: linkInData, buildTime: BUILD_TIME }), /Refusing to wipe/);
+  assert.ok((await lstat(linkInData)).isSymbolicLink());
   assert.equal(await readFile(manifest, "utf8"), original);
 });
 

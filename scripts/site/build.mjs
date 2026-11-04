@@ -163,6 +163,9 @@ function isWithin(child, parent) {
 function assertSafeOutDir(outDir, guarded) {
   const resolved = path.resolve(outDir);
   const canonical = canonicalPath(resolved);
+  // rm() operates on the directory entry itself, so protect its location as well
+  // as its target when the final component is a symlink.
+  const entry = path.join(canonicalPath(path.dirname(resolved)), path.basename(resolved));
   const ancestors = [path.parse(canonical).root, os.homedir(), process.cwd()].map(canonicalPath);
   for (const dir of ancestors) {
     if (isWithin(dir, canonical)) {
@@ -170,7 +173,7 @@ function assertSafeOutDir(outDir, guarded) {
     }
   }
   for (const dir of guarded.map(canonicalPath)) {
-    if (isWithin(dir, canonical) || isWithin(canonical, dir)) {
+    if (isWithin(dir, canonical) || isWithin(canonical, dir) || isWithin(dir, entry) || isWithin(entry, dir)) {
       throw new Error(`Refusing to wipe output directory ${resolved}: it overlaps protected directory ${dir}`);
     }
   }
