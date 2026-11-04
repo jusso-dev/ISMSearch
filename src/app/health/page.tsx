@@ -22,12 +22,38 @@ const MEILI_HOST = process.env.MEILI_HOST ?? "http://localhost:7700";
 const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379";
 const CYBER_OSCAL_PAGE =
   "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/ism-oscal-releases";
-const CYBER_RSS_URL = process.env.CYBER_RSS_URL ?? "https://www.cyber.gov.au/rss/news";
+const ACSC_ALERTS_RSS_URL = "https://www.cyber.gov.au/rss/alerts";
 const GITHUB_TAGS_URL =
   "https://api.github.com/repos/AustralianCyberSecurityCentre/ism-oscal/tags?per_page=1";
+const ADVISORY_STALE_DAYS = 14;
+const EXTERNAL_CHECK_TTL_MS = 60_000;
 
-function redacted(value: string) {
-  return value.replace(/\/\/([^:@/]+):([^@/]+)@/g, "//$1:***@");
+/** Removes any username/password from a URL before it is displayed. */
+function redactUrl(value: string) {
+  try {
+    const url = new URL(value);
+    url.username = "";
+    url.password = "";
+    const text = url.toString();
+    // URL normalisation adds a trailing slash to bare origins; keep the original shape.
+    return !value.endsWith("/") && text.endsWith("/") && url.pathname === "/" ? text.slice(0, -1) : text;
+  } catch {
+    return value.replace(/\/\/[^/@\s]*@/g, "//");
+  }
+}
+
+/** Redacts credentials in any URLs embedded in free text (e.g. error messages). */
+function redactText(value: string) {
+  return value.replace(/([a-z][a-z0-9+.-]*:\/\/)[^/@\s]*@/gi, "$1");
+}
+
+function errorDetail(error: unknown, fallback: string) {
+  return redactText(error instanceof Error ? error.message : fallback);
+}
+
+function formatAge(ms: number) {
+  const hours = Math.round(ms / 360_000) / 10;
+  return hours >= 48 ? `${Math.round(hours / 2.4) / 10} days` : `${hours}h`;
 }
 
 async function timedFetch(url: string, init?: RequestInit) {
@@ -52,10 +78,11 @@ async function timedFetch(url: string, init?: RequestInit) {
 
 async function checkOllama(): Promise<HealthCheck> {
   const checkedAt = new Date().toISOString();
+  const host = redactUrl(OLLAMA_HOST);
   try {
     const { response, ms } = await timedFetch(`${OLLAMA_HOST}/api/tags`);
     if (!response.ok) {
-      return { name: "Ollama", status: "down", summary: `HTTP ${response.status}`, detail: OLLAMA_HOST, checkedAt };
+      return { name: "Ollama", status: "down", summary: `HTTP ${response.status}`, detail: host, checkedAt };
     }
     const json = (await response.json()) as { models?: { name?: string; model?: string }[] };
     const models = json.models ?? [];
@@ -64,7 +91,7 @@ async function checkOllama(): Promise<HealthCheck> {
       name: "Ollama",
       status: hasModel ? "ok" : "warn",
       summary: hasModel ? `${OLLAMA_MODEL} available` : `${models.length} model(s), ${OLLAMA_MODEL} missing`,
-      detail: `${OLLAMA_HOST} responded in ${ms} ms`,
+      detail: `${host} responded in ${ms} ms`,
       checkedAt,
     };
   } catch (error) {
@@ -72,7 +99,7 @@ async function checkOllama(): Promise<HealthCheck> {
       name: "Ollama",
       status: "down",
       summary: "Not reachable",
-      detail: error instanceof Error ? error.message : OLLAMA_HOST,
+      detail: `${host}: ${errorDetail(error, "request failed")}`,
       checkedAt,
     };
   }
@@ -80,17 +107,18 @@ async function checkOllama(): Promise<HealthCheck> {
 
 async function checkMeilisearch(): Promise<HealthCheck> {
   const checkedAt = new Date().toISOString();
+  const host = redactUrl(MEILI_HOST);
   try {
     const { response, ms } = await timedFetch(`${MEILI_HOST}/health`);
     if (!response.ok) {
-      return { name: "Meilisearch", status: "down", summary: `HTTP ${response.status}`, detail: MEILI_HOST, checkedAt };
+      return { name: "Meilisearch", status: "down", summary: `HTTP ${response.status}`, detail: host, checkedAt };
     }
     const json = (await response.json()) as { status?: string };
     return {
       name: "Meilisearch",
       status: json.status === "available" ? "ok" : "warn",
       summary: json.status ?? "Responded",
-      detail: `${MEILI_HOST} responded in ${ms} ms`,
+      detail: `${host} responded in ${ms} ms`,
       checkedAt,
     };
   } catch (error) {
@@ -98,16 +126,30 @@ async function checkMeilisearch(): Promise<HealthCheck> {
       name: "Meilisearch",
       status: "down",
       summary: "Not reachable",
-      detail: error instanceof Error ? error.message : MEILI_HOST,
+      detail: `${host}: ${errorDetail(error, "request failed")}`,
       checkedAt,
     };
   }
+}
+
+// External source checks are cached per server process so reloading the page does not
+// hammer cyber.gov.au or GitHub's unauthenticated API (60 requests/hour per IP).
+const externalCheckCache = new Map<string, { expiresAt: number; result: Promise<HealthCheck> }>();
+
+function checkUrlCached(name: string, url: string): Promise<HealthCheck> {
+  const now = Date.now();
+  const cached = externalCheckCache.get(url);
+  if (cached && cached.expiresAt > now) return cached.result;
+  const result = checkUrl(name, url);
+  externalCheckCache.set(url, { expiresAt: now + EXTERNAL_CHECK_TTL_MS, result });
+  return result;
 }
 
 async function checkUrl(name: string, url: string): Promise<HealthCheck> {
   const checkedAt = new Date().toISOString();
   try {
     const { response, ms } = await timedFetch(url);
+    await response.body?.cancel().catch(() => undefined);
     return {
       name,
       status: response.ok ? "ok" : "down",
@@ -120,7 +162,7 @@ async function checkUrl(name: string, url: string): Promise<HealthCheck> {
       name,
       status: "down",
       summary: "Not reachable",
-      detail: error instanceof Error ? error.message : url,
+      detail: `${url}: ${errorDetail(error, "request failed")}`,
       checkedAt,
     };
   }
@@ -132,30 +174,33 @@ async function checkLocalSync(): Promise<HealthCheck> {
   const latest = manifest.releases[0];
   const controls = latest ? await getControls(latest.version) : [];
   const generatedAt = manifest.generatedAt ? new Date(manifest.generatedAt) : null;
-  const ageHours = generatedAt ? Math.round((Date.now() - generatedAt.getTime()) / 36_000) / 10 : null;
+  const ageMs = generatedAt && !Number.isNaN(generatedAt.getTime()) ? Date.now() - generatedAt.getTime() : null;
 
   if (!latest || controls.length === 0) {
     return {
       name: "ISM local sync",
       status: "down",
       summary: "No usable local snapshot",
-      detail: "Run npm run sync:ism or docker compose up seed",
+      detail: "Run pnpm sync:ism or docker compose up seed",
       checkedAt,
     };
   }
 
+  // ISM releases are infrequent, so manifest age is reported but never flagged.
   return {
     name: "ISM local sync",
     status: "ok",
     summary: `${manifest.releases.length} releases, latest ${latest.release}`,
-    detail: `${controls.length} controls in latest snapshot. Last sync ${generatedAt?.toLocaleString() ?? "unknown"}${ageHours == null ? "" : ` (${ageHours}h ago)`}`,
+    detail: `${controls.length} controls in latest snapshot. Last sync ${generatedAt?.toLocaleString() ?? "unknown"}${ageMs == null ? "" : ` (${formatAge(ageMs)} ago)`}`,
     checkedAt,
   };
 }
 
 async function checkBullMq(): Promise<HealthCheck> {
   const checkedAt = new Date().toISOString();
+  const redisUrl = redactUrl(REDIS_URL);
   try {
+    // getJobsSnapshot fails fast (4 s timeout, no offline queue) when Redis is down.
     const queues = await getJobsSnapshot();
     const active = queues.reduce((sum, queue) => sum + (queue.counts.active ?? 0), 0);
     const failed = queues.reduce((sum, queue) => sum + (queue.counts.failed ?? 0), 0);
@@ -163,7 +208,7 @@ async function checkBullMq(): Promise<HealthCheck> {
       name: "BullMQ jobs",
       status: failed > 0 ? "warn" : "ok",
       summary: `${queues.length} queues, ${active} active`,
-      detail: `${redacted(REDIS_URL)}. Failed jobs retained: ${failed}`,
+      detail: `${redisUrl}. Failed jobs retained: ${failed}`,
       checkedAt,
     };
   } catch (error) {
@@ -171,7 +216,7 @@ async function checkBullMq(): Promise<HealthCheck> {
       name: "BullMQ jobs",
       status: "down",
       summary: "Redis or BullMQ not reachable",
-      detail: error instanceof Error ? error.message : REDIS_URL,
+      detail: `${redisUrl}: ${errorDetail(error, "connection failed")}`,
       checkedAt,
     };
   }
@@ -181,11 +226,25 @@ async function checkAcscAdvisorySync(): Promise<HealthCheck> {
   const checkedAt = new Date().toISOString();
   try {
     const result = await getLatestAdvisories(1);
+    if (!result) {
+      return {
+        name: "ACSC advisory sync",
+        status: "down",
+        summary: "No advisory snapshot",
+        detail: "Run pnpm sync:acsc or trigger the ACSC advisories job.",
+        checkedAt,
+      };
+    }
+    const fetchedAt = new Date(result.fetchedAt);
+    const ageMs = Number.isNaN(fetchedAt.getTime()) ? null : Date.now() - fetchedAt.getTime();
+    const stale = ageMs == null || ageMs > ADVISORY_STALE_DAYS * 24 * 3_600_000;
     return {
       name: "ACSC advisory sync",
-      status: result.advisories.length > 0 ? "ok" : "warn",
-      summary: `${result.advisories.length} latest item available`,
-      detail: `Last advisory snapshot/fetch ${new Date(result.fetchedAt).toLocaleString()}. Source: ${result.sourceUrl}`,
+      status: result.total === 0 || stale ? "warn" : "ok",
+      summary: stale
+        ? `Snapshot is ${ageMs == null ? "undated" : `${formatAge(ageMs)} old`} (older than ${ADVISORY_STALE_DAYS} days)`
+        : `${result.total} advisories in snapshot`,
+      detail: `Last snapshot ${ageMs == null ? "unknown" : `${fetchedAt.toLocaleString()} (${formatAge(ageMs)} ago)`}. Source: ${result.sourceUrl}`,
       checkedAt,
     };
   } catch (error) {
@@ -193,7 +252,7 @@ async function checkAcscAdvisorySync(): Promise<HealthCheck> {
       name: "ACSC advisory sync",
       status: "down",
       summary: "No advisory data available",
-      detail: error instanceof Error ? error.message : "Unable to read advisory sync",
+      detail: errorDetail(error, "Unable to read advisory snapshot"),
       checkedAt,
     };
   }
@@ -218,9 +277,9 @@ export default async function HealthPage() {
     checkOllama(),
     checkMeilisearch(),
     checkBullMq(),
-    checkUrl("ACSC ISM OSCAL page", CYBER_OSCAL_PAGE),
-    checkUrl("ACSC RSS feed", CYBER_RSS_URL),
-    checkUrl("ACSC GitHub OSCAL mirror", GITHUB_TAGS_URL),
+    checkUrlCached("ACSC ISM OSCAL page", CYBER_OSCAL_PAGE),
+    checkUrlCached("ACSC alerts RSS feed", ACSC_ALERTS_RSS_URL),
+    checkUrlCached("ACSC GitHub OSCAL mirror", GITHUB_TAGS_URL),
   ]);
 
   const checks = [localSync, advisorySync, ollama, meilisearch, bullMq, acscPage, acscRss, githubMirror];
@@ -239,7 +298,8 @@ export default async function HealthPage() {
           <p className="mb-2 text-xs font-bold uppercase text-[var(--muted)]">Operational health</p>
           <h1 className="m-0 text-3xl font-bold text-[var(--ink)]">ISM Search Health</h1>
           <p className="mt-3 max-w-[70ch] leading-relaxed text-[var(--muted)]">
-            Live checks for local data, Ollama, Meilisearch and official ASD/ACSC source reachability.
+            Live checks for local data, Ollama, Meilisearch and official ASD/ACSC source reachability. External
+            source checks are cached for 60 seconds.
           </p>
         </div>
         <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-bold ${statusTone(overall)}`}>
@@ -282,7 +342,7 @@ export default async function HealthPage() {
           Source endpoints
         </div>
         <p className="m-0 break-words">
-          ACSC page: {CYBER_OSCAL_PAGE}. RSS: {CYBER_RSS_URL}. GitHub mirror: {GITHUB_TAGS_URL}.
+          ACSC page: {CYBER_OSCAL_PAGE}. RSS: {ACSC_ALERTS_RSS_URL}. GitHub mirror: {GITHUB_TAGS_URL}.
         </p>
       </footer>
     </main>

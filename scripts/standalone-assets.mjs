@@ -2,6 +2,8 @@ import { existsSync } from "node:fs";
 import { cp, mkdir } from "node:fs/promises";
 import path from "node:path";
 
+// Copy the static assets Next.js leaves out of `.next/standalone`. Data is deliberately
+// not copied: the Docker image and docker-compose mount/copy data/ explicitly.
 const root = process.cwd();
 const standalone = path.join(root, ".next", "standalone");
 
@@ -13,4 +15,3 @@ async function copyIfExists(source, destination) {
 
 await copyIfExists(path.join(root, ".next", "static"), path.join(standalone, ".next", "static"));
 await copyIfExists(path.join(root, "public"), path.join(standalone, "public"));
-await copyIfExists(path.join(root, "data"), path.join(standalone, "data"));

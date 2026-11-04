@@ -1,10 +1,27 @@
-import { AlertTriangle, Clock, DatabaseZap, Play, RefreshCw } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, DatabaseZap, Play, RefreshCw, ShieldAlert } from "lucide-react";
 import { AppNav } from "@/components/app-nav";
 import { Button } from "@/components/ui/button";
-import { getJobsSnapshot, type JobSummary, type QueueSummary } from "@/lib/jobs/queues";
+import { getJobsSnapshot, isManagedQueueKey, type JobSummary, type QueueSummary } from "@/lib/jobs/queues";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+const QUEUE_LABELS: Record<string, string> = { ism: "ISM controls", acsc: "ACSC advisories" };
+
+// Only fixed messages are rendered; query-string values are never echoed back.
+const ERROR_MESSAGES: Record<string, string> = {
+  unauthorised: "Not authorised: the admin token was missing or incorrect.",
+  "unknown-queue": "Unknown job queue.",
+  unavailable: "The job queue is unavailable. Check that Redis and the worker are running.",
+  "invalid-request": "The request could not be processed.",
+  "rate-limited": "Too many requests. Wait a minute and try again.",
+};
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 function formatDate(value?: number) {
   if (!value) return "Not yet";
@@ -25,14 +42,22 @@ function progressText(progress: unknown) {
   return "Queued";
 }
 
-export default async function JobsPage() {
+export default async function JobsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const queued = firstParam(params.queued);
+  const errorCode = firstParam(params.error);
+  const queuedMessage = queued && isManagedQueueKey(queued) ? `${QUEUE_LABELS[queued]} refresh queued.` : null;
+  const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES["invalid-request"]) : null;
+  const tokenRequired = Boolean(process.env.JOBS_ADMIN_TOKEN);
+
   let queues: QueueSummary[] = [];
   let error: string | null = null;
 
   try {
     queues = await getJobsSnapshot();
   } catch (caught) {
-    error = caught instanceof Error ? caught.message : "Unable to load BullMQ jobs";
+    console.error("[jobs] unable to load BullMQ jobs", caught);
+    error = "Redis or the BullMQ queues could not be reached. Job status is unavailable until Redis is running.";
   }
 
   const activeCount = queues.reduce((sum, queue) => sum + (queue.counts.active ?? 0), 0);
@@ -55,6 +80,39 @@ export default async function JobsPage() {
         </div>
       </header>
 
+      {!tokenRequired && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-3 rounded-lg border border-[oklch(0.78_0.11_78)] bg-[oklch(0.972_0.03_78)] p-4 text-[oklch(0.42_0.1_78)]"
+        >
+          <ShieldAlert size={18} className="mt-0.5 shrink-0" />
+          <p className="m-0">
+            <strong>JOBS_ADMIN_TOKEN is not set;</strong> anyone who can reach this app can trigger sync jobs. Set
+            JOBS_ADMIN_TOKEN to require a token for manual runs.
+          </p>
+        </div>
+      )}
+
+      {queuedMessage && (
+        <div
+          role="status"
+          className="mb-5 flex items-start gap-3 rounded-lg border border-[oklch(0.75_0.08_158)] bg-[oklch(0.965_0.025_158)] p-4 text-[oklch(0.32_0.09_158)]"
+        >
+          <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
+          <p className="m-0">{queuedMessage}</p>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-3 rounded-lg border border-[oklch(0.76_0.1_31)] bg-[oklch(0.968_0.026_31)] p-4 text-[oklch(0.38_0.1_31)]"
+        >
+          <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+          <p className="m-0">{errorMessage}</p>
+        </div>
+      )}
+
       <section aria-label="Queue summary" className="mb-5 grid gap-3 md:grid-cols-3">
         <SummaryCard icon={<RefreshCw size={18} />} label="Active" value={String(activeCount)} />
         <SummaryCard icon={<Clock size={18} />} label="Scheduled" value={String(delayedCount)} />
@@ -69,7 +127,7 @@ export default async function JobsPage() {
       ) : (
         <section className="grid gap-4">
           {queues.map((queue) => (
-            <QueuePanel key={queue.key} queue={queue} />
+            <QueuePanel key={queue.key} queue={queue} tokenRequired={tokenRequired} />
           ))}
         </section>
       )}
@@ -77,7 +135,7 @@ export default async function JobsPage() {
   );
 }
 
-function QueuePanel({ queue }: { queue: QueueSummary }) {
+function QueuePanel({ queue, tokenRequired }: { queue: QueueSummary; tokenRequired: boolean }) {
   return (
     <article className="rounded-lg border border-[var(--line)] bg-[var(--panel)] p-5">
       <div className="mb-4 flex items-start justify-between gap-4 max-sm:grid">
@@ -88,8 +146,20 @@ function QueuePanel({ queue }: { queue: QueueSummary }) {
           </div>
           <p className="m-0 max-w-[82ch] leading-relaxed text-[var(--muted)]">{queue.description}</p>
         </div>
-        <form action="/api/jobs" method="post">
+        <form action="/api/jobs" method="post" className="flex items-end gap-2 max-sm:grid">
           <input type="hidden" name="queue" value={queue.key} />
+          {tokenRequired && (
+            <label className="grid gap-1 text-xs font-bold text-[var(--muted)]">
+              Admin token
+              <input
+                type="password"
+                name="token"
+                autoComplete="off"
+                required
+                className="w-48 rounded-md border border-[var(--line-strong)] bg-[var(--panel)] px-3 py-1.5 text-sm font-normal text-[var(--ink)]"
+              />
+            </label>
+          )}
           <Button type="submit" size="sm">
             <Play size={14} />
             Run now

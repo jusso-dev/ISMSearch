@@ -1,42 +1,64 @@
+# Requires MEILI_MASTER_KEY (>= 16 bytes) in .env — see .env.example.
+x-meili-master-key: &meili-master-key ${MEILI_MASTER_KEY:?Set MEILI_MASTER_KEY in .env (see .env.example)}
+
+x-hardening: &hardening
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+
 services:
   seed:
+    <<: *hardening
+    user: "${ISM_SYNC_UID:-1000}:${ISM_SYNC_GID:-1000}"
     build:
       context: .
       target: seeder
+    # Best effort: the repository ships committed data, so a failed refresh (e.g. no
+    # network) is logged and the stack still starts with the bundled snapshot.
+    command:
+      - sh
+      - -c
+      - |
+        node scripts/sync-ism.mjs || echo "seed: ISM sync failed (exit $$?); continuing with existing data" >&2
+        node scripts/sync-acsc-advisories.mjs || echo "seed: ACSC sync failed (exit $$?); continuing with existing data" >&2
+        exit 0
     environment:
-      ISM_RELEASE_COUNT: all
-      REDIS_URL: redis://redis:6379
+      ISM_RELEASE_COUNT: ${ISM_RELEASE_COUNT:-all}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       MEILI_HOST: http://meilisearch:7700
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      MEILI_MASTER_KEY: *meili-master-key
     depends_on:
       meilisearch:
-        condition: service_started
-      redis:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./data:/app/data
     restart: "no"
 
   worker:
+    <<: *hardening
+    user: "${ISM_SYNC_UID:-1000}:${ISM_SYNC_GID:-1000}"
     build:
       context: .
       target: worker
     environment:
-      ISM_RELEASE_COUNT: all
+      ISM_RELEASE_COUNT: ${ISM_RELEASE_COUNT:-all}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       REDIS_URL: redis://redis:6379
       MEILI_HOST: http://meilisearch:7700
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      MEILI_MASTER_KEY: *meili-master-key
       ISM_SYNC_CRON: "0 */6 * * *"
       ACSC_SYNC_CRON: "*/30 * * * *"
     depends_on:
       seed:
         condition: service_completed_successfully
       redis:
-        condition: service_started
+        condition: service_healthy
       meilisearch:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./data:/app/data
+    restart: unless-stopped
 
   web:
     build: .
@@ -49,19 +71,21 @@ services:
       ACSC_DATA_DIR: /app/data/acsc
       REDIS_URL: redis://redis:6379
       MEILI_HOST: http://meilisearch:7700
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      MEILI_MASTER_KEY: *meili-master-key
+      MEILI_SEARCH_KEY: ${MEILI_SEARCH_KEY:-}
       JOBS_ADMIN_TOKEN: ${JOBS_ADMIN_TOKEN:-}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
       OLLAMA_HOST: http://ollama:11434
-      OLLAMA_MODEL: llama3.2:3b
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:3b}
     depends_on:
       seed:
         condition: service_completed_successfully
       meilisearch:
-        condition: service_started
+        condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       ollama:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./data:/app/data:ro
     read_only: true
@@ -71,29 +95,52 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+    restart: unless-stopped
 
   meilisearch:
     image: getmeili/meilisearch:v1.26
     ports:
+      # Published on loopback only, for the local `pnpm dev` / `pnpm sync:index` flow.
       - "127.0.0.1:7700:7700"
     environment:
-      MEILI_ENV: development
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-local_dev_master_key_change_me}
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: *meili-master-key
       MEILI_NO_ANALYTICS: "true"
     volumes:
       - meili_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
 
   redis:
     image: redis:8-alpine
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 5s
+    restart: unless-stopped
 
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.40.13
     ports:
       - "127.0.0.1:11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 20s
+    restart: unless-stopped
 
 volumes:
   meili_data:

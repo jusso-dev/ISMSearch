@@ -1,8 +1,24 @@
 {
-  "generatedAt": "2026-05-11T05:33:52.681Z",
+  "generatedAt": "2026-11-03T10:41:24.458Z",
   "source": "AustralianCyberSecurityCentre/ism-oscal",
   "rssFeed": "https://www.cyber.gov.au/rss/news",
   "releases": [
+    {
+      "version": "v2026.09.4",
+      "release": "2026.09.4",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2026.09.4/ISM_catalog.json",
+      "count": 1192,
+      "syncedAt": "2026-11-03T10:41:23.925Z"
+    },
+    {
+      "version": "v2026.06.18",
+      "release": "2026.06.18",
+      "title": "Information security manual",
+      "sourceUrl": "https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/v2026.06.18/ISM_catalog.json",
+      "count": 1150,
+      "syncedAt": "2026-11-03T10:41:24.387Z"
+    },
     {
       "version": "v2026.03.24",
       "release": "2026.03.24",

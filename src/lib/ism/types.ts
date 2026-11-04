@@ -36,6 +36,8 @@ export type IsmManifest = {
   releases: IsmRelease[];
 };
 
+export type EssentialEightLevel = "ML1" | "ML2" | "ML3";
+
 export type SearchResponse = {
   query: string;
   version: string;
@@ -43,6 +45,44 @@ export type SearchResponse = {
   processingTimeMs: number;
   hits: IsmControl[];
   source: "meilisearch" | "local";
+  /** Zero-based offset of the first hit in `hits`. */
+  offset: number;
+  /** Page size that was requested. */
+  limit: number;
+};
+
+export type IsmFacets = {
+  version: string;
+  /** Chapters present in the release, in catalogue (document) order. */
+  chapters: string[];
+  /** Essential Eight maturity levels present in the release, sorted (ML1, ML2, ML3). */
+  essentialEight: string[];
+};
+
+export type ControlHistoryEntry = {
+  /** Release version key, e.g. "v2025.12.9". */
+  version: string;
+  /** Human release label, e.g. "2025.12.9". */
+  release: string;
+  status: "introduced" | "changed" | "unchanged" | "removed" | "reintroduced";
+  /** Fields that differ from the previous release containing the control (empty for introduced/removed). */
+  changedFields: string[];
+  /** The control as published in this release; null when the control was removed in this release. */
+  control: IsmControl | null;
+};
+
+export type ControlHistory = {
+  controlId: string;
+  /** The control in the latest manifest release, or null if it is not present there (removed). */
+  latest: IsmControl | null;
+  /** The latest release version in the manifest (the release `latest` was looked up in). */
+  latestVersion: string | null;
+  /** Version key of the first release containing the control. */
+  firstSeen: string | null;
+  /** Version key of the most recent release containing the control. */
+  lastSeen: string | null;
+  /** Oldest to newest; only releases where something happened (introduced, changed, removed, reintroduced). */
+  entries: ControlHistoryEntry[];
 };
 
 export type CompareChange = {

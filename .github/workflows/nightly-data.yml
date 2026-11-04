@@ -1,0 +1,112 @@
+name: Nightly ISM and ACSC data sync
+
+on:
+  schedule:
+    # 18:30 UTC = 04:30 AEST / 05:30 AEDT
+    - cron: "30 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync ISM releases and ACSC advisories
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - name: Check out main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install production dependencies
+        run: pnpm install --frozen-lockfile --prod
+
+      # Meilisearch indexing is skipped because MEILI_HOST is unset; only data/ is refreshed.
+      - name: Sync ISM OSCAL releases
+        id: ism
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISM_RELEASE_COUNT: all
+        run: node scripts/sync-ism.mjs
+
+      # Total feed failure leaves the archive untouched. Partial refreshes retain
+      # retrieved items without advancing the last complete refresh time.
+      - name: Sync ACSC alerts and advisories
+        id: acsc
+        continue-on-error: true
+        run: node scripts/sync-acsc-advisories.mjs
+
+      - name: Validate data files
+        run: |
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const manifest = JSON.parse(readFileSync("data/ism/manifest.json", "utf8"));
+            if (!manifest.releases?.length) throw new Error("manifest has no releases");
+            for (const release of manifest.releases) {
+              const snapshot = JSON.parse(readFileSync(`data/ism/releases/${release.version}.json`, "utf8"));
+              if (snapshot.controls.length < 500) throw new Error(`${release.version} has only ${snapshot.controls.length} controls`);
+            }
+            const advisories = JSON.parse(readFileSync("data/acsc/advisories.json", "utf8"));
+            if (!advisories.advisories?.length) throw new Error("advisory archive is empty");
+            console.log(`${manifest.releases.length} ISM releases, latest ${manifest.releases[0].version}; ${advisories.advisories.length} advisories`);
+          '
+
+      - name: Commit changed data
+        id: commit
+        run: |
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898783+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(data): nightly ISM and ACSC sync $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Data updated"
+            git show --stat --format= HEAD
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report sync failures
+        if: steps.ism.outcome == 'failure' || steps.acsc.outcome == 'failure'
+        run: |
+          echo "::error::An ISM or ACSC sync failed; check the preceding sync logs. Existing archive entries were retained where possible."
+          exit 1
+
+  # Pushes made with GITHUB_TOKEN do not trigger other workflows, so deploy the
+  # refreshed site from here. This also runs when only the ACSC step failed.
+  pages:
+    name: Publish GitHub Pages
+    needs: sync
+    if: ${{ !cancelled() && needs.sync.result != 'skipped' }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: main

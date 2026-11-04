@@ -1,447 +1,765 @@
 {
-  "sourceUrl": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories?items_per_page=30&sort_by=field_du_value_1",
-  "fetchedAt": "2026-05-11T06:30:00.571Z",
-  "count": 30,
+  "source": "ASD's ACSC alerts and advisories",
+  "sourceUrl": "https://www.cyber.gov.au/alerts-and-advisories",
+  "feeds": [
+    "https://www.cyber.gov.au/rss/alerts",
+    "https://www.cyber.gov.au/rss/advisories"
+  ],
+  "fetchedAt": "2026-11-03T11:01:03.009Z",
+  "count": 45,
   "advisories": [
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_clickfix-distributing-vidar-stealer-via-wordpress-targeting-australian-infrastructure",
+      "objectID": "alert_critical-vulnerabilities-in-fortinet-products",
+      "title": "Critical vulnerabilities in Fortinet products",
+      "summary": "Fortinet have announced critical vulnerabilities in Fortinet products, and are releasing security updates which customers should implement as a priority.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-fortinet-products",
+      "published": "2026-10-23",
+      "date": "23 Oct 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerabilities-in-php",
+      "title": "Critical vulnerabilities in PHP",
+      "summary": "A security release for two critical PHP vulnerabilities is set for public disclosure on 22 October 2026. PHP is widely used to power web applications.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-php",
+      "published": "2026-10-21",
+      "date": "21 Oct 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Individuals and families",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_protecting-operational-technology-and-edge-devices",
+      "title": "Protecting operational technology and edge devices",
+      "summary": "Alert on the cyber security risks to operational technology (OT), including refrigeration and cooling technology, with mitigation advice and guidance for businesses and organisations that operate this technology.",
+      "href": "https://www.cyber.gov.au/alert/protecting-operational-technology-and-edge-devices",
+      "published": "2026-10-14",
+      "date": "14 Oct 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "High",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_chinese-government-linked-cyber-threat-actors-combine-automated-and-hands-on-hacking-tools-to-steal-sensitive-data",
+      "title": "Chinese government-linked cyber threat actors combine automated and hands-on hacking tools to steal sensitive data",
+      "summary": "Learn how Chinese state-linked cyber actors steal sensitive data and discover practical steps to detect, prevent and respond to attacks.",
+      "href": "https://www.cyber.gov.au/advisory/chinese-government-linked-cyber-threat-actors-combine-automated-and-hands-on-hacking-tools-to-steal-sensitive-data",
+      "published": "2026-10-09",
+      "date": "09 Oct 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerabilities-in-citrix-netscaler-adc-and-citrix-netscaler-gateway-products",
+      "title": "Critical vulnerabilities in Citrix NetScaler ADC and Citrix NetScaler Gateway products",
+      "summary": "Alert for organisations to implement a high-priority patch addressing new vulnerabilities, under active exploitation in Citrix NetScaler ADC and Citrix NetScaler Gateway products.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-citrix-netscaler-adc-and-citrix-netscaler-gateway-products",
+      "published": "2026-10-01",
+      "date": "01 Oct 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_protect-your-organisations-ai-services",
+      "title": "Protect your organisations’ AI services",
+      "summary": "Protect access to AI services by securing accounts, credentials and connected systems to reduce the risk of unauthorised use, disruption and data exposure.",
+      "href": "https://www.cyber.gov.au/advisory/protect-your-organisations-ai-services",
+      "published": "2026-09-25",
+      "date": "25 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Individuals and families",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_risks-of-ai-misalignment-to-australian-organisations",
+      "title": "Risks of AI misalignment to Australian organisations",
+      "summary": "Alert on the risks of AI misalignment to Australian organisations, with mitigation advice and guidance on secure AI practices for organisations.",
+      "href": "https://www.cyber.gov.au/alert/risks-of-ai-misalignment-to-australian-organisations",
+      "published": "2026-09-25",
+      "date": "25 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "High",
+      "audiences": [
+        "Individuals and families",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_agentic-ai-harnesses",
+      "title": "Agentic AI harnesses",
+      "summary": "Learn how an agentic AI harness influences security, governance and operational risk, and apply practical measures to adopt agentic AI securely.",
+      "href": "https://www.cyber.gov.au/advisory/agentic-ai-harnesses",
+      "published": "2026-09-22",
+      "date": "22 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_north-korean-waterplum-commonly-referred-to-as-contagious-interview-cyber-actor-group-targeting-it-professionals",
+      "title": "North Korean \"WaterPlum,\" commonly referred to as “Contagious Interview,” cyber actor group targeting IT professionals",
+      "summary": "A joint cyber security advisory on North Korean threat actors targeting IT professionals through fake jobs, malware and cryptocurrency theft.",
+      "href": "https://www.cyber.gov.au/advisory/north-korean-waterplum-commonly-referred-to-as-contagious-interview-cyber-actor-group-targeting-it-professionals",
+      "published": "2026-09-22",
+      "date": "22 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_active-exploitation-of-adobe-commerce-and-magento-open-source-vulnerability",
+      "title": "Active exploitation of Adobe Commerce and Magento Open Source vulnerability",
+      "summary": "Alert on active exploitation of a critical vulnerability in Adobe Commerce and Magento Open Source.",
+      "href": "https://www.cyber.gov.au/alert/active-exploitation-of-adobe-commerce-and-magento-open-source-vulnerability",
+      "published": "2026-09-09",
+      "date": "09 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerabilities-in-citrix-netscaler-application-delivery-controller-adc-and-citrix-netscaler-gateway-products",
+      "title": "Critical vulnerabilities in Citrix NetScaler Application Delivery Controller (ADC) and Citrix NetScaler Gateway products",
+      "summary": "Alert on critical vulnerabilities affecting Citrix NetScaler ADC and Gateway products. Assess exposure and update all affected products.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-citrix-netscaler-application-delivery-controller-adc-and-citrix-netscaler-gateway-products",
+      "published": "2026-09-08",
+      "date": "08 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_digital-camouflage-crypters-make-malware-undetectable",
+      "title": "Digital camouflage: crypters make malware undetectable",
+      "summary": "Cybercriminals are increasingly using crypters to disguise malware and make it harder for antivirus software to detect.",
+      "href": "https://www.cyber.gov.au/advisory/digital-camouflage-crypters-make-malware-undetectable",
+      "published": "2026-09-08",
+      "date": "08 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_russian-state-supported-cyber-actors-conduct-phishing-campaign-targeting-users-of-zimbra-collaboration-suite",
+      "title": "Russian state-supported cyber actors conduct phishing campaign targeting users of Zimbra Collaboration Suite",
+      "summary": "Protect your organisation from phishing attacks by Russian state-sponsored cyber actors targeting Zimbra Collaboration Suite users.",
+      "href": "https://www.cyber.gov.au/advisory/russian-state-supported-cyber-actors-conduct-phishing-campaign-targeting-users-of-zimbra-collaboration-suite",
+      "published": "2026-09-08",
+      "date": "08 Sep 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_active-exploitation-of-a-software-development-platform-within-australia",
+      "title": "Active exploitation of a software development platform within Australia",
+      "summary": "Alert on actively exploited vulnerabilities affecting TeamCity On-Premise servers. Assess exposure and apply vendor mitigations for CVE 2026 63077 (Critical, 9.8).",
+      "href": "https://www.cyber.gov.au/alert/active-exploitation-of-a-software-development-platform-within-australia",
+      "published": "2026-08-24",
+      "date": "24 Aug 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "High",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_active-exploitation-of-remote-monitoring-and-management-platform-within-australia",
+      "title": "Active exploitation of remote monitoring and management platform within Australia",
+      "summary": "Alert on active exploitation in Australia of N-able and N-central vulnerabilities CVE-2026-18556 and CVE-2026-18577. Assess exposure and apply mitigations.",
+      "href": "https://www.cyber.gov.au/alert/active-exploitation-of-remote-monitoring-and-management-platform-within-australia",
+      "published": "2026-08-19",
+      "date": "19 Aug 2026",
+      "firstSeenAt": "2026-11-03T11:01:03.009Z",
+      "type": "Alert",
+      "severity": "High",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_clickfix-distributing-vidar-stealer-via-wordpress-targeting-australian-infrastructure",
       "title": "ClickFix distributing Vidar Stealer via WordPress targeting Australian infrastructure",
       "summary": "Threat actors are targeting Australian networks with a social engineering technique, ClickFix, to distribute malware through compromised WordPress websites. This advisory provides an overview of the activity, an assessment of the threat, observed indicators, detections and recommended mitigations.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/clickfix-distributing-vidar-stealer-via-wordpress-targeting-australian-infrastructure",
+      "href": "https://www.cyber.gov.au/advisory/clickfix-distributing-vidar-stealer-via-wordpress-targeting-australian-infrastructure",
+      "published": "2026-05-07",
       "date": "07 May 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_active-exploitation-of-cpanel-whm-critical-vulnerability",
+      "objectID": "alert_active-exploitation-of-cpanel-whm-critical-vulnerability",
       "title": "Active exploitation of cPanel/WHM critical vulnerability",
       "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD's ACSC) is aware of exploitation of a vulnerability affecting the cPanel/ WebHost Manager (CVE-2026-4194) administration control interfaces for website and server management. This vulnerability has received a CVSS4.0 base score of 9.3.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/active-exploitation-of-cpanel-whm-critical-vulnerability",
+      "href": "https://www.cyber.gov.au/alert/active-exploitation-of-cpanel-whm-critical-vulnerability",
+      "published": "2026-05-01",
       "date": "01 May 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_new-steps-for-organisations-running-cisco-firepower-and-secure-firewall-products",
-      "title": "New steps for organisations running Cisco Firepower and Secure Firewall products",
-      "summary": "ASD partners CISA and NCSC have identified new malware affecting Cisco Firepower and Secure Firewall products.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/new-steps-for-organisations-running-cisco-firepower-and-secure-firewall-products",
-      "date": "24 Apr 2026",
-      "type": "Alert",
-      "severity": "High",
-      "audiences": [
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_defending-against-china-nexus-covert-networks-of-compromised-devices",
+      "objectID": "advisory_defending-against-china-nexus-covert-networks-of-compromised-devices",
       "title": "Defending against China-nexus covert networks of compromised devices",
       "summary": "This advisory outlines the shift in tactics, techniques and procedures used by China-nexus cyber actors to target organisations, as well as recommended mitigations.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/defending-against-china-nexus-covert-networks-of-compromised-devices",
+      "href": "https://www.cyber.gov.au/advisory/defending-against-china-nexus-covert-networks-of-compromised-devices",
+      "published": "2026-04-24",
       "date": "24 Apr 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_russian-gru-targeting-western-logistics-entities-and-technology-companies",
+      "objectID": "alert_new-steps-for-organisations-running-cisco-firepower-and-secure-firewall-products",
+      "title": "New steps for organisations running Cisco Firepower and Secure Firewall products",
+      "summary": "ASD partners CISA and NCSC have identified new malware affecting Cisco Firepower and Secure Firewall products.",
+      "href": "https://www.cyber.gov.au/alert/new-steps-for-organisations-running-cisco-firepower-and-secure-firewall-products",
+      "published": "2026-04-24",
+      "date": "24 Apr 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Alert",
+      "severity": "High",
+      "audiences": [
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_russian-gru-targeting-western-logistics-entities-and-technology-companies",
       "title": "Russian GRU targeting Western logistics entities and technology companies",
       "summary": "This joint cybersecurity advisory (CSA) highlights a Russian state-sponsored cyber campaign targeting Western logistics entities and technology companies.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/russian-gru-targeting-western-logistics-entities-and-technology-companies",
+      "href": "https://www.cyber.gov.au/advisory/russian-gru-targeting-western-logistics-entities-and-technology-companies",
+      "published": "2026-04-17",
       "date": "17 Apr 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_ongoing-targeting-of-online-code-repositories",
+      "objectID": "alert_ongoing-targeting-of-online-code-repositories",
       "title": "Ongoing targeting of online code repositories",
       "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD's ACSC) is aware of increased targeting of online code repositories, with threat actors employing various tactics to scan for and extract secrets, access private code bases, and modify packages to infect users. The ASD’s ACSC does not have information to indicate that a specific industry or sector is being targeted, with this advisory providing general awareness of an observed increase in activity.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/ongoing-targeting-of-online-code-repositories",
+      "href": "https://www.cyber.gov.au/alert/ongoing-targeting-of-online-code-repositories",
+      "published": "2026-04-01",
       "date": "01 Apr 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "High",
       "audiences": [
-        "Individuals & families",
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Individuals and families",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_inc-ransom-affiliate-model-enabling-targeting-of-critical-networks",
-      "title": "INC Ransom Affiliate Model Enabling Targeting of Critical Networks",
-      "summary": "This advisory outlines the activity of ransomware group INC Ransom and their affiliate network, and the threat their operations currently pose to networks hosted in Australia, New Zealand, and the Pacific island states.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/inc-ransom-affiliate-model-enabling-targeting-of-critical-networks",
-      "date": "06 Mar 2026",
-      "type": "Advisory",
-      "severity": null,
-      "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_exploitation-of-cisco-sd-wan-appliances",
+      "objectID": "alert_exploitation-of-cisco-sd-wan-appliances",
       "title": "Exploitation of Cisco SD-WAN appliances",
       "summary": "Malicious cyber threat actors are targeting SD-WANs of organisations, globally. The purpose of this Alert is to provide mitigations for the ongoing exploitation of Cisco Software-Defined Wide Area Network (SD-WAN) technology, including via CVE-2026-20127, CVE-206-20128 and CVE-2026-20122.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/exploitation-of-cisco-sd-wan-appliances",
+      "href": "https://www.cyber.gov.au/alert/exploitation-of-cisco-sd-wan-appliances",
+      "published": "2026-03-06",
       "date": "06 Mar 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-unauthenticated-remote-code-execution-vulnerability-in-n8n-workflow-automation-platform",
-      "title": "Critical Unauthenticated Remote Code Execution vulnerability in n8n workflow automation platform",
-      "summary": "A critical unauthenticated Remote Code Execution (RCE) vulnerability affecting n8n workflow automation platform has been observed. The critical vulnerability, tracked as CVE-2026-21858, allows unauthenticated threat actors to access sensitive files on the underlying server through execution of certain form-based workflows leading to RCE. This vulnerability is assessed as CVSS 10.0.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-unauthenticated-remote-code-execution-vulnerability-in-n8n-workflow-automation-platform",
-      "date": "08 Jan 2026",
-      "type": "Alert",
-      "severity": "Critical",
-      "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_vulnerability-in-mongodb-product-mongodb-server-leak",
-      "title": "Vulnerability in MongoDB product – MongoDB server leak",
-      "summary": "ASD’s ACSC is aware of active global exploitation affecting MongoDB servers CVE-2025-14847. ASD’s ACSC recommends that organisations take immediate action to mitigate affected products, apply the latest patches and investigate for potential compromise.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/vulnerability-in-mongodb-product-mongodb-server-leak",
-      "date": "29 Dec 2025",
-      "type": "Alert",
-      "severity": "Critical",
-      "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerability-in-watchguard-firebox-devices-cve-2025-14733",
-      "title": "Critical vulnerability in WatchGuard Firebox devices (CVE-2025-14733)",
-      "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD’s ACSC) is aware of active exploitation of a critical vulnerability in WatchGuard Firebox devices.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerability-in-watchguard-firebox-devices-cve-2025-14733",
-      "date": "22 Dec 2025",
-      "type": "Alert",
-      "severity": "Critical",
-      "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerabilities-in-multiple-fortinet-products-forticloud-sso-login-authentication-bypass",
-      "title": "Critical vulnerabilities in multiple Fortinet products - FortiCloud SSO Login Authentication Bypass",
-      "summary": "Critical vulnerabilities in Multiple Fortinet Products - FortiCloud SSO Login Authentication Bypass CVE-2025-59718 & CVE-2025-59719. ASD’s ACSC recommends organisations update affected products to the latest versions and follow the advice detailed in the Fortinet Advisory.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerabilities-in-multiple-fortinet-products-forticloud-sso-login-authentication-bypass",
-      "date": "10 Dec 2025",
-      "type": "Alert",
-      "severity": "Critical",
-      "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
-        "Government"
-      ],
-      "source": "Cyber.gov.au alerts and advisories"
-    },
-    {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_pro-russia-hacktivists-conduct-opportunistic-attacks-against-us-and-global-critical-infrastructure",
-      "title": "Pro-Russia Hacktivists Conduct Opportunistic Attacks Against US and Global Critical Infrastructure",
-      "summary": "This joint Cybersecurity Advisory outlines the tactics, techniques and procedures used by pro-Russia hacktivist groups conducting unsophisticated attacks against US and global critical infrastructure, as well as recommended mitigations.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/pro-russia-hacktivists-conduct-opportunistic-attacks-against-us-and-global-critical-infrastructure",
-      "date": "10 Dec 2025",
+      "objectID": "advisory_inc-ransom-affiliate-model-enabling-targeting-of-critical-networks",
+      "title": "INC Ransom Affiliate Model Enabling Targeting of Critical Networks",
+      "summary": "This advisory outlines the activity of ransomware group INC Ransom and their affiliate network, and the threat their operations currently pose to networks hosted in Australia, New Zealand, and the Pacific island states.",
+      "href": "https://www.cyber.gov.au/advisory/inc-ransom-affiliate-model-enabling-targeting-of-critical-networks",
+      "published": "2026-03-06",
+      "date": "06 Mar 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerability-in-react-server-components-cve-2025-55182",
-      "title": "Critical vulnerability in React Server Components (CVE-2025-55182)",
-      "summary": "ASD's ACSC is aware of a critical vulnerability in React Server Components.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerability-in-react-server-components-cve-2025-55182",
-      "date": "04 Dec 2025",
+      "objectID": "alert_critical-unauthenticated-remote-code-execution-vulnerability-in-n8n-workflow-automation-platform",
+      "title": "Critical Unauthenticated Remote Code Execution vulnerability in n8n workflow automation platform",
+      "summary": "A critical unauthenticated Remote Code Execution (RCE) vulnerability affecting n8n workflow automation platform has been observed. The critical vulnerability, tracked as CVE-2026-21858, allows unauthenticated threat actors to access sensitive files on the underlying server through execution of certain form-based workflows leading to RCE. This vulnerability is assessed as CVSS 10.0.",
+      "href": "https://www.cyber.gov.au/alert/critical-unauthenticated-remote-code-execution-vulnerability-in-n8n-workflow-automation-platform",
+      "published": "2026-01-08",
+      "date": "08 Jan 2026",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_scammers-impersonating-police-to-target-victims-for-cryptocurrencyseed-wallet-theft",
+      "objectID": "alert_vulnerability-in-mongodb-product-mongodb-server-leak",
+      "title": "Vulnerability in MongoDB product – MongoDB server leak",
+      "summary": "ASD’s ACSC is aware of active global exploitation affecting MongoDB servers CVE-2025-14847. ASD’s ACSC recommends that organisations take immediate action to mitigate affected products, apply the latest patches and investigate for potential compromise.",
+      "href": "https://www.cyber.gov.au/alert/vulnerability-in-mongodb-product-mongodb-server-leak",
+      "published": "2025-12-29",
+      "date": "29 Dec 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerability-in-watchguard-firebox-devices-cve-2025-14733",
+      "title": "Critical vulnerability in WatchGuard Firebox devices (CVE-2025-14733)",
+      "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD’s ACSC) is aware of active exploitation of a critical vulnerability in WatchGuard Firebox devices.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerability-in-watchguard-firebox-devices-cve-2025-14733",
+      "published": "2025-12-22",
+      "date": "22 Dec 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerabilities-in-multiple-fortinet-products-forticloud-sso-login-authentication-bypass",
+      "title": "Critical vulnerabilities in multiple Fortinet products - FortiCloud SSO Login Authentication Bypass",
+      "summary": "Critical vulnerabilities in Multiple Fortinet Products - FortiCloud SSO Login Authentication Bypass CVE-2025-59718 & CVE-2025-59719. ASD’s ACSC recommends organisations update affected products to the latest versions and follow the advice detailed in the Fortinet Advisory.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-in-multiple-fortinet-products-forticloud-sso-login-authentication-bypass",
+      "published": "2025-12-10",
+      "date": "10 Dec 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "advisory_pro-russia-hacktivists-conduct-opportunistic-attacks-against-us-and-global-critical-infrastructure",
+      "title": "Pro-Russia Hacktivists Conduct Opportunistic Attacks Against US and Global Critical Infrastructure",
+      "summary": "This joint Cybersecurity Advisory outlines the tactics, techniques and procedures used by pro-Russia hacktivist groups conducting unsophisticated attacks against US and global critical infrastructure, as well as recommended mitigations.",
+      "href": "https://www.cyber.gov.au/advisory/pro-russia-hacktivists-conduct-opportunistic-attacks-against-us-and-global-critical-infrastructure",
+      "published": "2025-12-10",
+      "date": "10 Dec 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Advisory",
+      "severity": null,
+      "audiences": [
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_critical-vulnerability-in-react-server-components-cve-2025-55182",
+      "title": "Critical vulnerability in React Server Components (CVE-2025-55182)",
+      "summary": "ASD's ACSC is aware of a critical vulnerability in React Server Components.",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerability-in-react-server-components-cve-2025-55182",
+      "published": "2025-12-04",
+      "date": "04 Dec 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
+    {
+      "objectID": "alert_scammers-impersonating-police-to-target-victims-for-cryptocurrencyseed-wallet-theft",
       "title": "Scammers impersonating police to target victims for cryptocurrency/seed wallet theft",
       "summary": "The ASD’s ACSC is aware that criminals are using Australia’s national cybercrime reporting channel and impersonating police to try to scam Australians out of funds from their cryptocurrency or seed wallets.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/scammers-impersonating-police-to-target-victims-for-cryptocurrencyseed-wallet-theft",
+      "href": "https://www.cyber.gov.au/alert/scammers-impersonating-police-to-target-victims-for-cryptocurrencyseed-wallet-theft",
+      "published": "2025-11-13",
       "date": "13 Nov 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Medium",
       "audiences": [
-        "Individuals & families"
+        "Individuals and families"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_badcandy",
+      "objectID": "advisory_badcandy",
       "title": "Don’t take BADCANDY from strangers – How your devices could be implanted and what to do about it",
       "summary": "ASD recommends that system operators take the following actions to remove the BADCANDY implant if compromised and to mitigate the risk of re-exploitation.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/badcandy",
+      "href": "https://www.cyber.gov.au/advisory/badcandy",
+      "published": "2025-10-31",
       "date": "31 Oct 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerability-in-Microsoft-Windows-Server-Update-Service",
+      "objectID": "alert_critical-vulnerability-in-microsoft-windows-server-update-service",
       "title": "Critical vulnerability in Microsoft Windows Server Update Service (WSUS)",
       "summary": "Critical vulnerability impacting Microsoft Windows Server Update Service – CVE-2025-59287. ASD’s ACSC recommends organisations update affected products to the latest versions and follow the advice detailed in the Microsoft Security Update guide.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerability-in-Microsoft-Windows-Server-Update-Service",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerability-in-microsoft-windows-server-update-service",
+      "published": "2025-10-25",
       "date": "25 Oct 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_Multiple-high-severity-vulnerabilities-in-F5-products-and-incident-impacting-F5",
+      "objectID": "alert_multiple-high-severity-vulnerabilities-in-f5-products-and-incident-impacting-f5",
       "title": "Multiple high-severity vulnerabilities in F5 products and incident impacting F5",
       "summary": "F5 has released multiple security advisories affecting BIG-IP, BIG-IP Next, F5OS, and Silverline products. The most critical issues include vulnerabilities in SCP/SFTP, SSL/TLS, HTTP/2, and TMM components, with several rated high (CVSS up to 8.8). Exploitation could allow remote code execution, data exposure, or denial of service.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/Multiple-high-severity-vulnerabilities-in-F5-products-and-incident-impacting-F5",
+      "href": "https://www.cyber.gov.au/alert/multiple-high-severity-vulnerabilities-in-f5-products-and-incident-impacting-f5",
+      "published": "2025-10-16",
       "date": "16 Oct 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerability-in-oracle-e-business-suite",
+      "objectID": "alert_critical-vulnerability-in-oracle-e-business-suite",
       "title": "Critical vulnerability in Oracle E-Business Suite",
       "summary": "ASD’s ACSC recommends organisations update affected products to the latest versions and follow the advice detailed in the Oracle Security Advisory.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerability-in-oracle-e-business-suite",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerability-in-oracle-e-business-suite",
+      "published": "2025-10-07",
       "date": "07 Oct 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_multiple-vulnerabilities-affecting-cisco-asa-5500-x-series-devices",
+      "objectID": "alert_multiple-vulnerabilities-affecting-cisco-asa-5500-x-series-devices",
       "title": "Multiple vulnerabilities affecting Cisco ASA 5500-X Series devices",
       "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD's ACSC) is aware of multiple vulnerabilities impacting Cisco Secure Firewall Adaptive Security Appliance (ASA) 5500-X Series models that are running Cisco ASA Software or Cisco Secure Firewall Threat Defense (FTD) Software. Cisco reports active exploitation of these vulnerabilities globally. ASD’s ACSC has also observed targeting in Australia.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/multiple-vulnerabilities-affecting-cisco-asa-5500-x-series-devices",
+      "href": "https://www.cyber.gov.au/alert/multiple-vulnerabilities-affecting-cisco-asa-5500-x-series-devices",
+      "published": "2025-09-26",
       "date": "26 Sep 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_ongoing-active-exploitation-of-sonicwall-ssl-vpns-in-australia",
+      "objectID": "alert_ongoing-active-exploitation-of-sonicwall-ssl-vpns-in-australia",
       "title": "Ongoing active exploitation of SonicWall SSL VPNs in Australia (CVE-2024-40766)",
       "summary": "The Australian Signals Directorate’s (ASD’s) Australian Cyber Security Centre (ACSC) is aware of ongoing active exploitation of a critical vulnerability in SonicWall SSL VPNs.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/ongoing-active-exploitation-of-sonicwall-ssl-vpns-in-australia",
+      "href": "https://www.cyber.gov.au/alert/ongoing-active-exploitation-of-sonicwall-ssl-vpns-in-australia",
+      "published": "2025-09-10",
       "date": "10 Sep 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "High",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure"
+        "Small and medium business",
+        "Large organisations and critical infrastructure"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_countering-chinese-state-sponsored-actors-compromise-of-networks-worldwide-to-feed-global-espionage-system",
+      "objectID": "advisory_countering-chinese-state-sponsored-actors-compromise-of-networks-worldwide-to-feed-global-espionage-system",
       "title": "Countering Chinese State-Sponsored Actors Compromise of Networks Worldwide to Feed Global Espionage System",
       "summary": "This joint cyber security advisory gives vital insights on People’s Republic of China (PRC) state-sponsored cyber threat actors, how they gain and maintain persistent access, and the capabilities they have. It provides threat hunting guidance and mitigation strategies to help safeguard your networks.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/countering-chinese-state-sponsored-actors-compromise-of-networks-worldwide-to-feed-global-espionage-system",
+      "href": "https://www.cyber.gov.au/advisory/countering-chinese-state-sponsored-actors-compromise-of-networks-worldwide-to-feed-global-espionage-system",
+      "published": "2025-08-28",
       "date": "28 Aug 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_Multiple-vulnerabilities-affecting-NetScaler-ADC-and-NetScaler-Gateway-devices",
+      "objectID": "alert_multiple-vulnerabilities-affecting-netscaler-adc-and-netscaler-gateway-devices",
       "title": "Multiple vulnerabilities affecting NetScaler ADC and NetScaler Gateway devices",
       "summary": "The Australian Signals Directorate’s Australian Cyber Security Centre (ASD’s ACSC) is aware of multiple vulnerabilities (CVE-2025-7775, CVE-2025-7776 & CVE-2025-8424) affecting NetScaler ADC (formerly Citrix ADC) and NetScaler Gateway (formerly Citrix Gateway) products.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/Multiple-vulnerabilities-affecting-NetScaler-ADC-and-NetScaler-Gateway-devices",
+      "href": "https://www.cyber.gov.au/alert/multiple-vulnerabilities-affecting-netscaler-adc-and-netscaler-gateway-devices",
+      "published": "2025-08-27",
       "date": "27 Aug 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_scattered-spider",
+      "objectID": "advisory_scattered-spider",
       "title": "Scattered Spider",
       "summary": "This joint Cybersecurity Advisory is in response to recent activity by Scattered Spider threat actors against the commercial facilities sectors, subsectors, and other sectors. This advisory provides tactics, techniques, and procedures (TTPs) obtained through FBI investigations as recently as June 2025",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/scattered-spider",
+      "href": "https://www.cyber.gov.au/advisory/scattered-spider",
+      "published": "2025-07-30",
       "date": "30 Jul 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_vulnerability-microsoft-office-sharepoint-server-products",
+      "objectID": "alert_vulnerability-microsoft-office-sharepoint-server-products",
       "title": "Vulnerability in Microsoft Office SharePoint Server products",
       "summary": "ASD’s ACSC is aware of a vulnerability (CVE-2025-53770) affecting instances of Microsoft Office SharePoint Server products. Organisations are strongly encouraged to take immediate action to mitigate and detect compromise on relevant systems.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/vulnerability-microsoft-office-sharepoint-server-products",
+      "href": "https://www.cyber.gov.au/alert/vulnerability-microsoft-office-sharepoint-server-products",
+      "published": "2025-07-20",
       "date": "20 Jul 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_critical-vulnerabilities-citrix-netscaler-adc-and-netscaler-gateway-products",
+      "objectID": "alert_critical-vulnerabilities-citrix-netscaler-adc-and-netscaler-gateway-products",
       "title": "Critical vulnerabilities in Citrix NetScaler ADC and NetScaler Gateway Products",
       "summary": "The ASD's ACSC is aware of critical vulnerabilities in Citrix NetScaler ADC and NetScaler Gateway Products (CVE-2025-5349, CVE-2025-5777).",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/critical-vulnerabilities-citrix-netscaler-adc-and-netscaler-gateway-products",
+      "href": "https://www.cyber.gov.au/alert/critical-vulnerabilities-citrix-netscaler-adc-and-netscaler-gateway-products",
+      "published": "2025-07-04",
       "date": "04 Jul 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_email-scammers-impersonating-asds-acsc",
+      "objectID": "alert_email-scammers-impersonating-asds-acsc",
       "title": "Scammers impersonating the ASD's ACSC",
       "summary": "Scammers are impersonating the ASD's ACSC sending out phishing emails to the public with the email content suggesting to download a malicious antivirus program.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/email-scammers-impersonating-asds-acsc",
+      "href": "https://www.cyber.gov.au/alert/email-scammers-impersonating-asds-acsc",
+      "published": "2025-06-13",
       "date": "13 Jun 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Medium",
       "audiences": [
-        "Individuals & families",
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Individuals and families",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_stopransomware-play-ransomware",
+      "objectID": "advisory_stopransomware-play-ransomware",
       "title": "#StopRansomware: Play ransomware",
       "summary": "This joint Cybersecurity Advisory (CSA) is part of an ongoing #StopRansomware effort to publish advisories for network defenders that detail various ransomware variants and ransomware threat actors.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/stopransomware-play-ransomware",
+      "href": "https://www.cyber.gov.au/advisory/stopransomware-play-ransomware",
+      "published": "2025-06-05",
       "date": "05 Jun 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Advisory",
       "severity": null,
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_multiple-vulnerabilities-in-ivanti-endpoint-manager-mobile",
+      "objectID": "alert_multiple-vulnerabilities-in-ivanti-endpoint-manager-mobile",
       "title": "Multiple Vulnerabilities In Ivanti Endpoint Manager Mobile (Ivanti EPMM)",
       "summary": "The Australian Signals Directorate’s (ASD) Australian Cyber Security Centre (ACSC) is aware of two vulnerabilities, one medium and one high severity, in Ivanti Endpoint Manager Mobile (EPMM). The ASD’s ACSC recommends organisations patch to the latest version of Ivanti EPMM, available through Ivanti’s download portal, and investigate whether their systems have been compromised.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/multiple-vulnerabilities-in-ivanti-endpoint-manager-mobile",
+      "href": "https://www.cyber.gov.au/alert/multiple-vulnerabilities-in-ivanti-endpoint-manager-mobile",
+      "published": "2025-05-14",
       "date": "14 May 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Organisations & Critical Infrastructure",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     },
     {
-      "objectID": "about-us_view-all-content_alerts-and-advisories_Exploitation-of-Existing-Fortinet-Vulnerabilities",
+      "objectID": "alert_exploitation-of-existing-fortinet-vulnerabilities",
       "title": "Exploitation of existing Fortinet Vulnerabilities",
       "summary": "Fortinet has released information regarding exploitation of previously known vulnerabilities affecting Fortinet devices. ASD’s ACSC recommends customers follow the advice contained in Fortinet’s advisory page.",
-      "href": "https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories/Exploitation-of-Existing-Fortinet-Vulnerabilities",
+      "href": "https://www.cyber.gov.au/alert/exploitation-of-existing-fortinet-vulnerabilities",
+      "published": "2025-04-11",
       "date": "11 Apr 2025",
+      "firstSeenAt": "2026-05-11T06:30:00.571Z",
       "type": "Alert",
       "severity": "Critical",
       "audiences": [
-        "Small & medium businesses",
-        "Organisations & Critical Infrastructure",
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
         "Government"
       ],
-      "source": "Cyber.gov.au alerts and advisories"
+      "source": "Cyber.gov.au RSS"
     }
   ]
 }
