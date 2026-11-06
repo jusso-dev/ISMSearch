@@ -29,7 +29,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "docx": "^9.6.1",
-    "ioredis": "^5.10.1",
+    "ioredis": "^6.0.0",
     "jspdf": "^4.2.1",
     "lucide-react": "1.14.0",
     "meilisearch": "0.58.0",
