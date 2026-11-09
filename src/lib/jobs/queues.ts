@@ -165,7 +165,7 @@ export async function getJobsSnapshot(): Promise<QueueSummary[]> {
           const config = QUEUE_CONFIG[key];
           const queue = getManagedQueue(key);
           const [counts, jobs] = await Promise.all([
-            queue.getJobCounts("waiting", "active", "completed", "failed", "delayed", "paused"),
+            queue.getJobCounts("waiting", "active", "completed", "failed", "delayed"),
             queue.getJobs(["active", "waiting", "delayed", "completed", "failed"], 0, 12, false),
           ]);
 

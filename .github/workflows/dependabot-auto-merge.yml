@@ -1,0 +1,58 @@
+name: Dependabot auto-merge
+
+# Runs after CI so a Dependabot PR is only merged once its exact head commit has passed
+# lint, typecheck, tests, build, audit and the Docker smoke test. Major version bumps
+# are left open for manual review. Triggered via workflow_run (not pull_request) so the
+# merge does not depend on branch protection, which would block the nightly data pushes.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    name: Merge passing Dependabot PR
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      startsWith(github.event.workflow_run.head_branch, 'dependabot/')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge minor and patch updates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          pr=$(gh pr list --head "$HEAD_BRANCH" --state open --author app/dependabot \
+            --json number,headRefOid --jq ".[] | select(.headRefOid == \"$HEAD_SHA\") | .number")
+          if [ -z "$pr" ]; then
+            echo "No open Dependabot PR at $HEAD_SHA on $HEAD_BRANCH; nothing to merge."
+            exit 0
+          fi
+
+          # Dependabot records every bumped dependency in its commit message metadata.
+          types=$(gh api "repos/$GH_REPO/commits/$HEAD_SHA" --jq .commit.message \
+            | sed -n 's/^ *update-type: version-update:semver-//p' | sort -u)
+          if [ -z "$types" ]; then
+            echo "No Dependabot update metadata on $HEAD_SHA; leaving PR #$pr for review."
+            exit 0
+          fi
+          if printf '%s\n' "$types" | grep -qx major; then
+            echo "PR #$pr includes a major version bump; leaving it for manual review."
+            exit 0
+          fi
+
+          gh pr merge "$pr" --squash --delete-branch --match-head-commit "$HEAD_SHA"

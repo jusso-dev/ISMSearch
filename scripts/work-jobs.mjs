@@ -54,14 +54,13 @@ function runScript(job, script, progressLabel) {
   });
 }
 
-/** Remove schedulers left over from the legacy `repeat` + `jobId` API (or renamed ids). */
+/** Remove job schedulers whose ids are no longer in use (e.g. renamed schedulers). */
 async function removeStaleSchedulers(queue, keepId) {
   try {
     for (const scheduler of await queue.getJobSchedulers()) {
       const key = scheduler.key ?? scheduler.id;
       if (!key || key === keepId) continue;
-      const removed = await queue.removeJobScheduler(key).catch(() => false);
-      if (!removed) await queue.removeRepeatableByKey(key).catch(() => false);
+      await queue.removeJobScheduler(key).catch(() => false);
       console.log(`Removed stale scheduler ${key} from ${queue.name}`);
     }
   } catch (error) {
