@@ -162,13 +162,13 @@ Run it manually from the Actions tab, or with `gh workflow run nightly-data.yml`
 | `nightly-data.yml` | The scheduled data refresh described above. |
 | `trivy.yml` | Trivy dependency, secret and IaC scanning uploaded to GitHub code scanning. |
 
-Dependabot keeps npm packages, GitHub Actions and the Docker base image up to date. Every action is pinned to a commit SHA.
+Dependabot keeps npm packages, GitHub Actions and the Docker base image up to date. Minor and patch updates are merged automatically once CI passes (`dependabot-auto-merge.yml`); major bumps wait for review. Every action is pinned to a commit SHA.
 
 ## Stack
 
 - Next.js 16 App Router with TypeScript
 - React 19
-- Node 24 (`.nvmrc`; Docker uses `node:24.22.1-bookworm-slim`) and pnpm 10 via Corepack (`packageManager` in `package.json`)
+- Node 26 (`.nvmrc`; Docker uses `node:26.13.0-bookworm-slim`) and pnpm 10 (pinned via `packageManager` in `package.json`)
 - Tailwind CSS v4 with local shadcn-style UI primitives
 - Meilisearch for local search indexes
 - Ollama for local natural-language answers and policy generation
@@ -219,10 +219,10 @@ pnpm ollama:pull
 
 ## Local Development
 
-Use Node 24 and pnpm (via Corepack):
+Use Node 26 and pnpm 10 (Node 26 no longer bundles Corepack):
 
 ```bash
-corepack enable
+npm install -g pnpm@10.33.0
 pnpm install
 ```
 

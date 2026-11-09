@@ -1,18 +1,16 @@
 # syntax=docker/dockerfile:1
 
 # ---- base: shared settings -------------------------------------------------------
-FROM node:24.22.1-bookworm-slim AS base
+FROM node:26.13.0-bookworm-slim AS base
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     PNPM_HOME=/pnpm \
     PATH=/pnpm:$PATH
 WORKDIR /app
 
-# ---- pnpm: corepack provisions the exact pnpm pinned in package.json -------------
+# ---- pnpm: installs the exact pnpm pinned in package.json (Node 26 has no corepack)
 FROM base AS pnpm
-RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
-RUN corepack install
+RUN npm install -g "$(node -p "require('./package.json').packageManager")" && npm cache clean --force
 
 # ---- deps: full dependency tree for the Next.js build ----------------------------
 FROM pnpm AS deps
