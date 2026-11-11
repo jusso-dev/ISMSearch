@@ -45,7 +45,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.5",
     "playwright": "^1.64.1",
     "typescript": "6.0.3"
   },
