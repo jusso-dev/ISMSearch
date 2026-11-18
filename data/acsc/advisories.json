@@ -5,9 +5,26 @@
     "https://www.cyber.gov.au/rss/alerts",
     "https://www.cyber.gov.au/rss/advisories"
   ],
-  "fetchedAt": "2026-11-17T01:56:20.959Z",
-  "count": 45,
+  "fetchedAt": "2026-11-18T01:06:04.700Z",
+  "count": 46,
   "advisories": [
+    {
+      "objectID": "alert_vulnerabilities-are-moving-quickly-so-patch-protect-prevent",
+      "title": "Vulnerabilities are moving quickly, so patch, protect, prevent",
+      "summary": "Actions organisations can take to identify internet-exposed systems, address vulnerabilities and reduce cyber security risk.",
+      "href": "https://www.cyber.gov.au/alert/vulnerabilities-are-moving-quickly-so-patch-protect-prevent",
+      "published": "2026-11-17",
+      "date": "17 Nov 2026",
+      "firstSeenAt": "2026-11-18T01:06:04.700Z",
+      "type": "Alert",
+      "severity": "Critical",
+      "audiences": [
+        "Small and medium business",
+        "Large organisations and critical infrastructure",
+        "Government"
+      ],
+      "source": "Cyber.gov.au RSS"
+    },
     {
       "objectID": "alert_critical-vulnerabilities-in-fortinet-products",
       "title": "Critical vulnerabilities in Fortinet products",
