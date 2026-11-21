@@ -322,3 +322,13 @@ While capturing, it checks that every link and button has an accessible name and
 This project is a local workbench and static mirror for search, drafting and analysis. It is not an authoritative source of
 ISM guidance and is not affiliated with ASD or the ACSC. Always verify compliance, risk and policy decisions against the
 official ASD and ACSC publications.
+
+## Licence
+
+The source code in this repository is licensed under the [MIT Licence](LICENSE).
+
+The Australian Information Security Manual (ISM) data and ACSC alerts and advisories synced into `data/` are sourced from
+the Australian Signals Directorate (ASD) under its own terms:
+[Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) (excluding the
+Commonwealth Coat of Arms, ASD/ACSC logos and third-party material), attributed to the Australian Signals Directorate as
+© Commonwealth of Australia 2026. See <https://www.cyber.gov.au/copyright> for the full copyright terms.
